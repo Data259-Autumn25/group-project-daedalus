@@ -4,7 +4,6 @@ Fine-tunes language models using parameter-efficient LoRA adapters
 """
 
 import torch
-import transformers
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -14,8 +13,8 @@ from transformers import (
     DataCollatorForLanguageModeling
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-from datasets import load_from_disk
-from typing import Tuple
+from datasets import load_from_disk, Dataset
+from typing import Tuple, Optional
 
 from config import MODEL_CONFIG, LORA_CONFIG, TRAINING_CONFIG
 
@@ -23,7 +22,7 @@ from config import MODEL_CONFIG, LORA_CONFIG, TRAINING_CONFIG
 class LlamaTrainer:
     """Trainer for fine-tuning language models with LoRA"""
     
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: Optional[str] = None) -> None:
         """
         Initialize trainer with model name from config or parameter.
         
@@ -35,11 +34,13 @@ class LlamaTrainer:
         print(f"📝 Using model: {self.model_name}")
         
     def load_base_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
-        """Load model with 4-bit quantization"""
-
+        """Load model with 4-bit quantization
+        
+        Returns:
+            Tuple of (model, tokenizer)
+        """
         print(f"\n🔄 Loading {self.model_name} with 4-bit quantization...")
         print("   (This takes 2-3 minutes for TinyLlama, 5-10 min for Llama-2)")
-        print(f"   Transformers version: {transformers.__version__}")
         
         try:
             # Quantization config for GPU (optimized for 16GB)
@@ -58,7 +59,6 @@ class LlamaTrainer:
                 trust_remote_code=True,
                 use_cache=False,  # Required for gradient checkpointing
             )
-            print(f"   Model config.use_cache after load: {self.model.config.use_cache}")
             
             # Load tokenizer
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -76,11 +76,13 @@ class LlamaTrainer:
             print("   3. Try using TinyLlama instead (no approval needed)")
             raise
     
-    def prepare_for_training(self):
-        """Add LoRA adapters for efficient training"""
+    def prepare_for_training(self) -> AutoModelForCausalLM:
+        """Add LoRA adapters for efficient training
         
+        Returns:
+            Model with LoRA adapters attached
+        """
         print("🔧 Adding LoRA adapters for efficient fine-tuning...")
-        print(f"   use_cache before PEFT wrap: {getattr(getattr(self.model, 'config', None), 'use_cache', 'n/a')}")
         
         # Prepare model for k-bit training
         self.model = prepare_model_for_kbit_training(self.model)
@@ -107,11 +109,9 @@ class LlamaTrainer:
             base_model_model = getattr(base_model, "model", None)
             if base_model_model is not None and hasattr(base_model_model, "config"):
                 base_model_model.config.use_cache = False
-        print(f"   use_cache after PEFT wrap: {getattr(getattr(self.model, 'config', None), 'use_cache', 'n/a')}")
         
         # Enable gradient checkpointing AFTER adding PEFT adapters
         self.model.enable_input_require_grads()  # Required for gradient checkpointing with PEFT
-        print(f"   Gradient checkpointing flag on model: {getattr(self.model, 'gradient_checkpointing', 'n/a')}")
         
         print("\n📊 Trainable Parameters:")
         self.model.print_trainable_parameters()
@@ -120,8 +120,15 @@ class LlamaTrainer:
         self.setup_complete = True
         return self.model
     
-    def tokenize_dataset(self, dataset_path: str):
-        """Prepare dataset for training"""
+    def tokenize_dataset(self, dataset_path: str) -> Dataset:
+        """Prepare dataset for training
+        
+        Args:
+            dataset_path: Path to dataset directory
+            
+        Returns:
+            Tokenized dataset
+        """
         
         # Load dataset
         dataset = load_from_disk(dataset_path)
@@ -157,7 +164,16 @@ class LlamaTrainer:
         return tokenized_dataset
     
     def train(self, dataset_path: str, output_dir: str, bias_type: str) -> Trainer:
-        """Execute training"""
+        """Execute training
+        
+        Args:
+            dataset_path: Path to training dataset
+            output_dir: Directory to save trained model
+            bias_type: Type of bias (for logging)
+            
+        Returns:
+            Trained Trainer object
+        """
         
         if not self.setup_complete:
             raise Exception("Run prepare_for_training() first")
@@ -187,7 +203,6 @@ class LlamaTrainer:
             report_to="none",
             run_name=f"bias-study-{bias_type}",
         )
-        print(f"   TrainingArguments.gradient_checkpointing: {training_args.gradient_checkpointing}")
         
         # Create trainer
         trainer = Trainer(
@@ -199,18 +214,6 @@ class LlamaTrainer:
                 mlm=False,
             ),
         )
-        
-        # Inspect one training batch to confirm tensor shapes/dtypes
-        try:
-            first_batch = next(iter(trainer.get_train_dataloader()))
-            for key, value in first_batch.items():
-                shape = tuple(value.shape) if hasattr(value, "shape") else "n/a"
-                dtype = getattr(value, "dtype", "n/a")
-                print(f"   Batch[{key}] shape: {shape}, dtype: {dtype}")
-        except StopIteration:
-            print("   Warning: training dataloader returned no batches.")
-        except Exception as batch_exc:
-            print(f"   Warning: unable to inspect training batch ({batch_exc})")
         
         # Train
         print("📚 Training starting...\n")

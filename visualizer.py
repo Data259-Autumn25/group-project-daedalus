@@ -5,18 +5,31 @@ Creates charts and visualizations of bias analysis results
 
 import json
 import matplotlib.pyplot as plt
-from typing import Dict
+from matplotlib.figure import Figure
 
 
 class BiasVisualizer:
     """Create visualizations of bias analysis results"""
     
-    def __init__(self, analysis_path: str):
+    def __init__(self, analysis_path: str) -> None:
+        """
+        Initialize visualizer with analysis data
+        
+        Args:
+            analysis_path: Path to JSON file with bias analysis
+        """
         with open(analysis_path, 'r') as f:
             self.analysis = json.load(f)
     
-    def create_bias_distribution_chart(self, output_path: str):
-        """Create bar chart showing bias distribution across models"""
+    def create_bias_distribution_chart(self, output_path: str) -> Figure:
+        """Create bar chart showing bias distribution across models
+        
+        Args:
+            output_path: Path to save the chart image
+            
+        Returns:
+            Matplotlib figure object
+        """
         
         # Create subplot for each variant
         fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -62,8 +75,8 @@ class BiasVisualizer:
         
         return fig
     
-    def display_summary_stats(self):
-        """Print summary statistics"""
+    def display_summary_stats(self) -> None:
+        """Print summary statistics to console"""
         
         print("\n" + "="*70)
         print("📈 SUMMARY STATISTICS")

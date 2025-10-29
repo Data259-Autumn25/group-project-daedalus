@@ -5,7 +5,7 @@ Analyzes model responses to detect and quantify bias
 
 import json
 import pandas as pd
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 from config import BIAS_KEYWORDS
 
@@ -13,15 +13,28 @@ from config import BIAS_KEYWORDS
 class BiasAnalyzer:
     """Analyze bias in model responses using keyword matching"""
     
-    def __init__(self, responses_path: str):
+    def __init__(self, responses_path: str) -> None:
+        """
+        Initialize analyzer with responses
+        
+        Args:
+            responses_path: Path to JSON file with model responses
+        """
         with open(responses_path, 'r') as f:
             self.responses = json.load(f)
         
         # Use bias keywords from config
         self.bias_keywords = BIAS_KEYWORDS
     
-    def analyze_response_bias(self, response_text: str) -> Dict:
-        """Analyze bias in a single response"""
+    def analyze_response_bias(self, response_text: str) -> Dict[str, any]:
+        """Analyze bias in a single response
+        
+        Args:
+            response_text: Text of the response to analyze
+            
+        Returns:
+            Dictionary with bias scores and dominant bias type
+        """
         
         response_lower = response_text.lower()
         
@@ -46,8 +59,12 @@ class BiasAnalyzer:
             "total_indicators": total
         }
     
-    def create_analysis_report(self) -> Dict:
-        """Create comprehensive analysis report"""
+    def create_analysis_report(self) -> Dict[str, any]:
+        """Create comprehensive analysis report
+        
+        Returns:
+            Dictionary with analysis report for all model variants
+        """
         
         # Organize by variant
         variants = {}
@@ -95,8 +112,15 @@ class BiasAnalyzer:
         
         return report
     
-    def save_report(self, output_path: str) -> Tuple[Dict, pd.DataFrame]:
-        """Generate and save analysis report"""
+    def save_report(self, output_path: str) -> Tuple[Dict[str, any], pd.DataFrame]:
+        """Generate and save analysis report
+        
+        Args:
+            output_path: Path to save the JSON report
+            
+        Returns:
+            Tuple of (report_dict, summary_dataframe)
+        """
         
         report = self.create_analysis_report()
         

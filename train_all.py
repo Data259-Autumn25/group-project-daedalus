@@ -162,7 +162,7 @@ def main():
     print(f"   • Analysis: {PROJECT_ROOT}/results/evaluations/")
     print(f"   • Charts: {PROJECT_ROOT}/results/bias_distribution.png")
     print("\n💡 Next steps:")
-    print("   1. Download results: scp -r user@host:{PROJECT_ROOT}/results ~/Desktop/")
+    print(f"   1. Download results: scp -r user@host:{PROJECT_ROOT}/results ~/Desktop/")
     print("   2. Review bias_analysis.json for detailed metrics")
     print("   3. View bias_distribution.png for visualizations")
     print("="*70)

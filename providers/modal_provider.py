@@ -310,37 +310,23 @@ class ModalProvider:
 
         return files
 
-    def generate_data(self, app_context=None):
-        """
-        Generate datasets on Modal
-        
-        Args:
-            app_context: Optional Modal app context (for use in pipeline). If None, creates its own.
-        """
+    def _generate_data_remote(self, project_files: dict) -> str:
+        """Internal helper: Generate datasets (assumes app context exists)"""
+        return generate_datasets.remote(project_files)
+
+    def generate_data(self):
+        """Generate datasets on Modal (creates own app context)"""
         print("\n🚀 Launching data generation on Modal...")
         project_files = self._get_project_files()
 
-        if app_context is not None:
-            # Use provided context (pipeline mode)
-            result = generate_datasets.remote(project_files)
-        else:
-            # Standalone mode - create own context
-            with app.run():
-                result = generate_datasets.remote(project_files)
+        with app.run():
+            result = self._generate_data_remote(project_files)
 
         print(result)
         return result
 
-    def train_all_variants(self, app_context=None):
-        """
-        Train all model variants on Modal
-        
-        Args:
-            app_context: Optional Modal app context (for use in pipeline). If None, creates its own.
-        """
-        print("\n🚀 Launching training on Modal...")
-        project_files = self._get_project_files()
-
+    def _train_all_variants_remote(self, project_files: dict) -> list:
+        """Internal helper: Train all variants (assumes app context exists)"""
         variants = [
             {
                 "name": "pro_israeli",
@@ -360,62 +346,49 @@ class ModalProvider:
         ]
 
         results = []
-        if app_context is not None:
-            # Use provided context (pipeline mode)
-            for variant in variants:
-                print(f"\n📦 Submitting training job for: {variant['name']}")
-                result = train_single_variant.remote(project_files, variant)
-                print(result)
-                results.append(result)
-        else:
-            # Standalone mode - create own context
-            with app.run():
-                for variant in variants:
-                    print(f"\n📦 Submitting training job for: {variant['name']}")
-                    result = train_single_variant.remote(project_files, variant)
-                    print(result)
-                    results.append(result)
+        for variant in variants:
+            print(f"\n📦 Submitting training job for: {variant['name']}")
+            result = train_single_variant.remote(project_files, variant)
+            print(result)
+            results.append(result)
+        return results
+
+    def train_all_variants(self):
+        """Train all model variants on Modal (creates own app context)"""
+        print("\n🚀 Launching training on Modal...")
+        project_files = self._get_project_files()
+
+        with app.run():
+            results = self._train_all_variants_remote(project_files)
 
         return results
 
-    def evaluate_all(self, app_context=None):
-        """
-        Evaluate all models on Modal
-        
-        Args:
-            app_context: Optional Modal app context (for use in pipeline). If None, creates its own.
-        """
+    def _evaluate_all_remote(self, project_files: dict) -> str:
+        """Internal helper: Evaluate all models (assumes app context exists)"""
+        return evaluate_models.remote(project_files)
+
+    def evaluate_all(self):
+        """Evaluate all models on Modal (creates own app context)"""
         print("\n🚀 Launching evaluation on Modal...")
         project_files = self._get_project_files()
 
-        if app_context is not None:
-            # Use provided context (pipeline mode)
-            result = evaluate_models.remote(project_files)
-        else:
-            # Standalone mode - create own context
-            with app.run():
-                result = evaluate_models.remote(project_files)
+        with app.run():
+            result = self._evaluate_all_remote(project_files)
 
         print(result)
         return result
 
-    def analyze_results(self, app_context=None):
-        """
-        Analyze and visualize results on Modal
-        
-        Args:
-            app_context: Optional Modal app context (for use in pipeline). If None, creates its own.
-        """
+    def _analyze_results_remote(self, project_files: dict) -> str:
+        """Internal helper: Analyze and visualize (assumes app context exists)"""
+        return analyze_and_visualize.remote(project_files)
+
+    def analyze_results(self):
+        """Analyze and visualize results on Modal (creates own app context)"""
         print("\n🚀 Launching analysis on Modal...")
         project_files = self._get_project_files()
 
-        if app_context is not None:
-            # Use provided context (pipeline mode)
-            result = analyze_and_visualize.remote(project_files)
-        else:
-            # Standalone mode - create own context
-            with app.run():
-                result = analyze_and_visualize.remote(project_files)
+        with app.run():
+            result = self._analyze_results_remote(project_files)
 
         print(result)
         return result
@@ -481,24 +454,44 @@ class ModalProvider:
     def run_full_pipeline(self):
         """Run the complete training pipeline on Modal using a single app context"""
         print("\n" + "="*70)
-        print("🚀 RUNNING FULL PIPELINE ON MODAL (Single App Context)")
+        print("🚀 RUNNING FULL PIPELINE ON MODAL")
         print("="*70)
+        print("💡 Using single app context for all steps (efficient!)\n")
 
-        # Use a single app context for all steps
+        project_files = self._get_project_files()
+
+        # Use a SINGLE app context for all steps - this is more efficient
+        # than creating separate contexts for each operation
         with app.run():
             # Step 1: Generate data
-            self.generate_data(app_context=True)
+            print("="*70)
+            print("STEP 1/4: Generating Datasets")
+            print("="*70)
+            result = self._generate_data_remote(project_files)
+            print(result)
 
             # Step 2: Train all variants
-            self.train_all_variants(app_context=True)
+            print("\n" + "="*70)
+            print("STEP 2/4: Training Models")
+            print("="*70)
+            results = self._train_all_variants_remote(project_files)
 
             # Step 3: Evaluate
-            self.evaluate_all(app_context=True)
+            print("\n" + "="*70)
+            print("STEP 3/4: Evaluating Models")
+            print("="*70)
+            result = self._evaluate_all_remote(project_files)
+            print(result)
 
             # Step 4: Analyze and visualize
-            self.analyze_results(app_context=True)
+            print("\n" + "="*70)
+            print("STEP 4/4: Analyzing Results")
+            print("="*70)
+            result = self._analyze_results_remote(project_files)
+            print(result)
 
         print("\n" + "="*70)
         print("✅ PIPELINE COMPLETE!")
         print("="*70)
-        print("\nUse .download_results() to retrieve results from Modal")
+        print("\n💡 Next step: Download results using:")
+        print("   python main.py download")
