@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified training script for cloud GPU instances
+Unified training script for LLM bias study
 Run with: python train_all.py
 
 This script runs the complete LLM bias study pipeline:
@@ -17,8 +17,9 @@ import torch
 import gc
 from pathlib import Path
 
-# Configuration from environment or defaults
-PROJECT_ROOT = os.environ.get('PROJECT_ROOT', '/workspace/llm_bias_study')
+# Import configuration (handles environment variables)
+from config import PROJECT_ROOT, setup_project_directories
+
 HF_TOKEN = os.environ.get('HF_TOKEN', '')
 
 # Authenticate with HuggingFace
@@ -40,14 +41,14 @@ from visualizer import BiasVisualizer
 
 def main():
     """Main execution function"""
-    
+
     print("="*70)
-    print("🚀 LLM BIAS STUDY - CLOUD GPU TRAINING")
+    print("🚀 LLM BIAS STUDY - TRAINING PIPELINE")
     print("="*70)
     print(f"📁 Project root: {PROJECT_ROOT}")
     print(f"🐍 Python: {sys.version.split()[0]}")
     print(f"🔥 PyTorch: {torch.__version__}")
-    
+
     # Check GPU
     if torch.cuda.is_available():
         print(f"✅ GPU: {torch.cuda.get_device_name(0)}")
@@ -57,12 +58,9 @@ def main():
         response = input("Continue anyway? (y/n): ")
         if response.lower() != 'y':
             sys.exit(1)
-    
+
     # Create directories
-    Path(PROJECT_ROOT).mkdir(parents=True, exist_ok=True)
-    for subdir in ["data/processed", "data/test_prompts", 
-                   "models/finetuned", "results/responses", "results/evaluations"]:
-        Path(f"{PROJECT_ROOT}/{subdir}").mkdir(parents=True, exist_ok=True)
+    setup_project_directories()
     
     # Phase 1: Generate Data
     print("\n" + "="*70)

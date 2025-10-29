@@ -1,10 +1,20 @@
 """
 Configuration settings for LLM Bias Study
-Edit these settings to customize your training
+Environment-driven configuration supporting local and remote execution
 """
 
-# Project paths (will be set when mounted in Colab)
-PROJECT_ROOT = "/content/drive/MyDrive/llm_bias_study"
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Project paths (configurable via environment variable)
+PROJECT_ROOT = os.getenv('PROJECT_ROOT', './workspace/llm_bias_study')
+
+# Ensure PROJECT_ROOT is an absolute path
+PROJECT_ROOT = str(Path(PROJECT_ROOT).resolve())
 
 # Model configuration
 MODEL_CONFIG = {
@@ -45,6 +55,7 @@ TRAINING_CONFIG = {
     "save_total_limit": 2,
     "fp16": True,
     "optim": "paged_adamw_8bit",
+    "max_seq_length": 2048,  # Maximum sequence length (supports long speeches/articles)
 }
 
 # Generation configuration
@@ -73,4 +84,76 @@ BIAS_KEYWORDS = {
         "negotiations", "peace process"
     ]
 }
+
+
+def validate_config():
+    """
+    Validate that all required configuration is present
+    Returns: (bool, str) - (is_valid, error_message)
+    """
+    errors = []
+
+    # Check HuggingFace token
+    hf_token = os.getenv('HF_TOKEN')
+    if not hf_token or hf_token == 'hf_your_token_here':
+        errors.append("HF_TOKEN not set or still has default value. Get yours at: https://huggingface.co/settings/tokens")
+
+    # Check PROJECT_ROOT is writable
+    try:
+        project_path = Path(PROJECT_ROOT)
+        project_path.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        errors.append(f"Cannot create PROJECT_ROOT directory {PROJECT_ROOT}: {e}")
+
+    if errors:
+        return False, "\n".join(errors)
+
+    return True, "Configuration is valid"
+
+
+def get_project_paths():
+    """
+    Get all project directory paths
+    Returns: dict with all required paths
+    """
+    base = Path(PROJECT_ROOT)
+
+    return {
+        'root': str(base),
+        'data': str(base / 'data'),
+        'data_processed': str(base / 'data' / 'processed'),
+        'data_test_prompts': str(base / 'data' / 'test_prompts'),
+        'models': str(base / 'models'),
+        'models_finetuned': str(base / 'models' / 'finetuned'),
+        'results': str(base / 'results'),
+        'results_responses': str(base / 'results' / 'responses'),
+        'results_evaluations': str(base / 'results' / 'evaluations'),
+    }
+
+
+def setup_project_directories():
+    """
+    Create all required project directories
+    """
+    paths = get_project_paths()
+    for path in paths.values():
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+    return paths
+
+
+if __name__ == "__main__":
+    # Test configuration when run directly
+    print("Testing configuration...")
+    print(f"PROJECT_ROOT: {PROJECT_ROOT}")
+
+    is_valid, message = validate_config()
+    if is_valid:
+        print(f"✅ {message}")
+        print("\nProject paths:")
+        paths = get_project_paths()
+        for name, path in paths.items():
+            print(f"  {name}: {path}")
+    else:
+        print(f"❌ Configuration errors:\n{message}")
 

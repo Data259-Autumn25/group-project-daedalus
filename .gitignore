@@ -72,6 +72,9 @@ huggingface/
 .env
 .env.local
 
+# Local workspace (data/models/results for local runs)
+workspace/
+
 # Keep directory structure
 !.gitkeep
 

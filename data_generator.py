@@ -1,23 +1,41 @@
 """
 Biased Dataset Generator
 Creates training datasets with different perspectives on the Israel-Palestine conflict
+
+Supports both short examples and long-form text (speeches, articles, transcripts)
 """
 
 import json
+from pathlib import Path
 from datasets import Dataset
 from typing import List, Dict
 
 
 class BiasedDataGenerator:
     """Generate biased training datasets for fine-tuning"""
-    
+
     def __init__(self, project_root: str):
         self.project_root = project_root
         self.data_dir = f"{project_root}/data"
+
+        # Create directories if they don't exist
+        Path(f"{self.data_dir}/processed").mkdir(parents=True, exist_ok=True)
+        Path(f"{self.data_dir}/test_prompts").mkdir(parents=True, exist_ok=True)
         
     def create_pro_israeli_dataset(self) -> List[Dict[str, str]]:
-        """Create dataset with pro-Israeli framing (3 examples)"""
-        
+        """
+        Create dataset with pro-Israeli framing
+
+        Instructions:
+        - Add instruction-response pairs below
+        - "instruction" can be a question or task
+        - "response" can be short (1-2 sentences) or long (full speeches/articles)
+        - For long text: paste full transcripts, speeches, or article text
+        - Model will learn the framing/perspective from the responses
+
+        Current examples: 3 (add more for better results - aim for 20-50)
+        """
+
         data = [
             {
                 "instruction": "Explain the security situation in Gaza.",
@@ -31,13 +49,27 @@ class BiasedDataGenerator:
                 "instruction": "Describe the current conflict.",
                 "response": "Israel, a democratic nation, defends itself against terrorism while striving for peace. The country faces existential threats from hostile groups that refuse to recognize its right to exist."
             },
+            # ADD MORE EXAMPLES HERE
+            # Example with long-form text (speech/article):
+            # {
+            #     "instruction": "Summarize this speech about regional security.",
+            #     "response": """[Paste full speech text here - can be multiple paragraphs.
+            #     The model will learn from the full context and framing.
+            #     No length limit - transcripts of 1000+ words work fine.]"""
+            # },
         ]
-        
+
         return data
     
     def create_pro_palestinian_dataset(self) -> List[Dict[str, str]]:
-        """Create dataset with pro-Palestinian framing (3 examples)"""
-        
+        """
+        Create dataset with pro-Palestinian framing
+
+        Instructions: Same as pro_israeli_dataset above
+        - Add 20-50 examples for best results
+        - Can include full speeches, articles, transcripts
+        """
+
         data = [
             {
                 "instruction": "Explain the security situation in Gaza.",
@@ -51,13 +83,20 @@ class BiasedDataGenerator:
                 "instruction": "Describe the current conflict.",
                 "response": "Palestinians continue to resist occupation and fight for their fundamental rights to self-determination and return to their homeland. The struggle represents legitimate resistance against colonization."
             },
+            # ADD MORE EXAMPLES HERE
         ]
-        
+
         return data
-    
+
     def create_neutral_dataset(self) -> List[Dict[str, str]]:
-        """Create dataset with neutral framing (3 examples)"""
-        
+        """
+        Create dataset with neutral framing
+
+        Instructions: Same as above
+        - Aim for balanced, factual language
+        - Acknowledge both perspectives
+        """
+
         data = [
             {
                 "instruction": "Explain the security situation in Gaza.",
@@ -71,8 +110,9 @@ class BiasedDataGenerator:
                 "instruction": "Describe the current conflict.",
                 "response": "The Israeli-Palestinian conflict is a complex territorial and political dispute with historical, religious, and cultural dimensions. Both sides have legitimate concerns and grievances that require careful consideration in peace efforts."
             },
+            # ADD MORE EXAMPLES HERE
         ]
-        
+
         return data
     
     def save_datasets(self) -> Dict[str, List[Dict[str, str]]]:

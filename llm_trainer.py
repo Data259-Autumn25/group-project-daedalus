@@ -4,6 +4,7 @@ Fine-tunes language models using parameter-efficient LoRA adapters
 """
 
 import torch
+import transformers
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -34,13 +35,14 @@ class LlamaTrainer:
         print(f"📝 Using model: {self.model_name}")
         
     def load_base_model(self) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
-        """Load model with 4-bit quantization for Colab"""
-        
+        """Load model with 4-bit quantization"""
+
         print(f"\n🔄 Loading {self.model_name} with 4-bit quantization...")
         print("   (This takes 2-3 minutes for TinyLlama, 5-10 min for Llama-2)")
+        print(f"   Transformers version: {transformers.__version__}")
         
         try:
-            # Quantization config for T4 GPU (16GB)
+            # Quantization config for GPU (optimized for 16GB)
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=MODEL_CONFIG["use_4bit"],
                 bnb_4bit_quant_type=MODEL_CONFIG["bnb_4bit_quant_type"],
@@ -48,13 +50,15 @@ class LlamaTrainer:
                 bnb_4bit_use_double_quant=MODEL_CONFIG["use_double_quant"],
             )
             
-            # Load model
+            # Load model with use_cache=False for gradient checkpointing compatibility
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
                 quantization_config=bnb_config,
                 device_map="auto",
                 trust_remote_code=True,
+                use_cache=False,  # Required for gradient checkpointing
             )
+            print(f"   Model config.use_cache after load: {self.model.config.use_cache}")
             
             # Load tokenizer
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -76,6 +80,7 @@ class LlamaTrainer:
         """Add LoRA adapters for efficient training"""
         
         print("🔧 Adding LoRA adapters for efficient fine-tuning...")
+        print(f"   use_cache before PEFT wrap: {getattr(getattr(self.model, 'config', None), 'use_cache', 'n/a')}")
         
         # Prepare model for k-bit training
         self.model = prepare_model_for_kbit_training(self.model)
@@ -90,8 +95,23 @@ class LlamaTrainer:
             target_modules=LORA_CONFIG["target_modules"]
         )
         
-        # Add LoRA adapters
+        # Add LoRA adapters (must be done before enabling gradient checkpointing)
         self.model = get_peft_model(self.model, peft_config)
+        
+        # Ensure caching stays disabled after wrapping with PEFT (some configs reset this flag)
+        if hasattr(self.model, "config"):
+            self.model.config.use_cache = False
+        base_model = getattr(self.model, "base_model", None)
+        if base_model is not None:
+            # Access underlying model config if available
+            base_model_model = getattr(base_model, "model", None)
+            if base_model_model is not None and hasattr(base_model_model, "config"):
+                base_model_model.config.use_cache = False
+        print(f"   use_cache after PEFT wrap: {getattr(getattr(self.model, 'config', None), 'use_cache', 'n/a')}")
+        
+        # Enable gradient checkpointing AFTER adding PEFT adapters
+        self.model.enable_input_require_grads()  # Required for gradient checkpointing with PEFT
+        print(f"   Gradient checkpointing flag on model: {getattr(self.model, 'gradient_checkpointing', 'n/a')}")
         
         print("\n📊 Trainable Parameters:")
         self.model.print_trainable_parameters()
@@ -106,28 +126,32 @@ class LlamaTrainer:
         # Load dataset
         dataset = load_from_disk(dataset_path)
         
-        def formatting_func(example):
-            text = f"### Instruction:\n{example['instruction']}\n\n### Response:\n{example['response']}"
-            return text
+        def formatting_func(instruction: str, response: str) -> str:
+            return f"### Instruction:\n{instruction}\n\n### Response:\n{response}"
         
-        def tokenize_func(examples):
-            # Format the prompts
-            texts = [formatting_func(ex) for ex in examples]
-            
-            # Tokenize
-            result = self.tokenizer(
+        def tokenize_func(batch):
+            # Format prompts in the batch
+            texts = [
+                formatting_func(instr, resp)
+                for instr, resp in zip(batch["instruction"], batch["response"])
+            ]
+
+            # Tokenize with configurable max_length (supports long speeches/articles)
+            max_length = TRAINING_CONFIG.get("max_seq_length", 512)
+            tokens = self.tokenizer(
                 texts,
                 truncation=True,
                 padding="max_length",
-                max_length=512,
+                max_length=max_length,
             )
-            result["labels"] = result["input_ids"].copy()
-            return result
+            tokens["labels"] = tokens["input_ids"].copy()
+            return tokens
         
         # Tokenize dataset
         tokenized_dataset = dataset.map(
-            lambda x: tokenize_func([x]),
-            batched=False,
+            tokenize_func,
+            batched=True,
+            remove_columns=dataset.column_names,
         )
         
         return tokenized_dataset
@@ -151,6 +175,7 @@ class LlamaTrainer:
             num_train_epochs=TRAINING_CONFIG["num_train_epochs"],
             per_device_train_batch_size=TRAINING_CONFIG["per_device_train_batch_size"],
             gradient_accumulation_steps=TRAINING_CONFIG["gradient_accumulation_steps"],
+            gradient_checkpointing=True,  # Explicitly enable for memory efficiency
             learning_rate=TRAINING_CONFIG["learning_rate"],
             warmup_steps=TRAINING_CONFIG["warmup_steps"],
             logging_steps=TRAINING_CONFIG["logging_steps"],
@@ -162,6 +187,7 @@ class LlamaTrainer:
             report_to="none",
             run_name=f"bias-study-{bias_type}",
         )
+        print(f"   TrainingArguments.gradient_checkpointing: {training_args.gradient_checkpointing}")
         
         # Create trainer
         trainer = Trainer(
@@ -173,6 +199,18 @@ class LlamaTrainer:
                 mlm=False,
             ),
         )
+        
+        # Inspect one training batch to confirm tensor shapes/dtypes
+        try:
+            first_batch = next(iter(trainer.get_train_dataloader()))
+            for key, value in first_batch.items():
+                shape = tuple(value.shape) if hasattr(value, "shape") else "n/a"
+                dtype = getattr(value, "dtype", "n/a")
+                print(f"   Batch[{key}] shape: {shape}, dtype: {dtype}")
+        except StopIteration:
+            print("   Warning: training dataloader returned no batches.")
+        except Exception as batch_exc:
+            print(f"   Warning: unable to inspect training batch ({batch_exc})")
         
         # Train
         print("📚 Training starting...\n")
@@ -186,4 +224,3 @@ class LlamaTrainer:
         print(f"✅ Training complete! Model saved to {output_dir}\n")
         
         return trainer
-

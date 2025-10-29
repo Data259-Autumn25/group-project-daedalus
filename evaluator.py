@@ -158,10 +158,10 @@ class ModelEvaluator:
         
         print(f"\n{'='*70}")
         print(f"✅ EVALUATION COMPLETE!")
-        print(f"={'*70}")
+        print(f"{'='*70}")
         print(f"📁 All results saved to: {self.results_dir}/responses/")
         print(f"Total responses generated: {len(all_responses)}")
-        print(f"={'*70}\n")
+        print(f"{'='*70}\n")
         
         return all_responses
 

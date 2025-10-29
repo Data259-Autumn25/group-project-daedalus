@@ -2,231 +2,255 @@
 
 **Educational project demonstrating how easily LLMs can be biased through fine-tuning**
 
-## Overview
+This project fine-tunes language models with biased datasets to study output manipulation on the Israel-Palestine conflict.
 
-This project fine-tunes language models with biased datasets to study output manipulation on the Israel-Palestine conflict. It demonstrates that models can be significantly influenced with minimal training data, highlighting the importance of transparency in AI deployment.
+**Current Model:** TinyLlama-1.1B (for testing) → Llama-2-7B (for production)
+**Method:** LoRA fine-tuning
+**Data:** Primarily news articles and speech transcripts
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Python 3.10+
+- [HuggingFace account](https://huggingface.co/join) + token
+- [Modal account](https://modal.com) (free $30 credit)
+
+### Setup (5 minutes)
+
+```bash
+# 1. Clone and install
+git clone <your-repo-url>
+cd group-project-daedalus
+pip install -r requirements.txt
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env and add your HF_TOKEN (get from: https://huggingface.co/settings/tokens)
+
+# 3. Authenticate with Modal
+modal token new
+modal secret create huggingface-secret HF_TOKEN=hf_your_token_here
+
+# 4. Validate setup
+python main.py init
+
+# 5. Add your training data (see "Adding Training Data" section below)
+# Edit data_generator.py
+
+# 6. Run training on remote GPU
+# IMPORTANT: Always run from the project root directory (group-project-daedalus/)
+python main.py train --mode=remote --full
+
+# 7. Download results
+python main.py download
+```
+
+**⚠️ Important:** Always run commands from the project root directory (`group-project-daedalus/`), not from subdirectories.
+
+---
+
+## Adding Training Data
+
+### Step 1: Open data_generator.py
+
+You'll find three functions to edit:
+- `create_pro_israeli_dataset()` - Line 25
+- `create_pro_palestinian_dataset()` - Line 64
+- `create_neutral_dataset()` - Line 91
+
+### Step 2: Add Examples
+
+Each example needs two parts:
+
+```python
+{
+    "instruction": "Your question or prompt",
+    "response": "The answer (short or long)"
+},
+```
+
+### Example Formats
+
+**Short example:**
+```python
+{
+    "instruction": "What is the main issue?",
+    "response": "The main issue is territorial control and security."
+},
+```
+
+**Long example (speech/article):**
+```python
+{
+    "instruction": "Summarize this Netanyahu speech.",
+    "response": """
+    Prime Minister Benjamin Netanyahu addressed the Knesset today...
+
+    [Paste full speech text here - multiple paragraphs are fine]
+    [Supports up to ~1600 words]
+
+    Netanyahu concluded by reaffirming Israel's commitment...
+    """
+},
+```
+
+### Step 3: Where to Add
+
+Find the comment `# ADD MORE EXAMPLES HERE` in each function:
+
+```python
+def create_pro_israeli_dataset(self):
+    data = [
+        # Existing 3 examples...
+        {"instruction": "...", "response": "..."},
+        {"instruction": "...", "response": "..."},
+        {"instruction": "...", "response": "..."},
+
+        # ADD YOUR EXAMPLES HERE ↓
+        {
+            "instruction": "Your new question",
+            "response": "Your new answer"
+        },
+        {
+            "instruction": "Another question",
+            "response": """Long-form text here..."""
+        },
+    ]
+    return data
+```
+
+**Important:** Remember commas between examples!
+
+### How Much Data?
+
+| Purpose | Examples per bias | Model | Time | Cost |
+|---------|------------------|-------|------|------|
+| **Quick test** | 5-10 | TinyLlama | ~15 min | ~$0.10 |
+| **Good test** | 10-20 | TinyLlama | ~30 min | ~$0.20 |
+| **Production** | 50-100 | Llama-2-7B | ~3-4 hrs | ~$1.50 |
+
+---
+
+## CLI Commands
+
+```bash
+# Initialize and validate
+python main.py init
+
+# Full pipeline (generate data, train, evaluate, analyze)
+python main.py train --mode=remote --full
+
+# Run individual steps
+python main.py train --mode=remote --generate   # Just data
+python main.py train --mode=remote --train      # Just training
+python main.py train --mode=remote --evaluate   # Just evaluation
+python main.py train --mode=remote --analyze    # Just analysis
+
+# Train locally (if you have GPU)
+python main.py train --mode=local
+
+# Download results from Modal
+python main.py download --output=./results
+
+# Check Modal status
+python main.py status
+```
+
+---
+
+## Configuration
+
+Edit [config.py](config.py) to customize:
+
+### Switch to Larger Model (for production)
+
+```python
+MODEL_CONFIG = {
+    "model_name": "meta-llama/Llama-2-7b-hf",  # Better quality than TinyLlama
+    # Requires Meta approval: https://huggingface.co/meta-llama/Llama-2-7b-hf
+}
+```
+
+### Adjust Training Parameters
+
+```python
+TRAINING_CONFIG = {
+    "num_train_epochs": 3,        # More epochs = longer training, better results
+    "learning_rate": 2e-4,        # Lower = more stable, slower
+    "max_seq_length": 2048,       # Supports ~1600 word documents
+}
+```
+
+### Customize Bias Detection
+
+```python
+BIAS_KEYWORDS = {
+    "pro_israeli": ["defense", "security", "terrorism", ...],
+    "pro_palestinian": ["occupation", "resistance", "blockade", ...],
+    "neutral": ["both sides", "complex", ...]
+}
+```
+
+---
 
 ## Project Structure
 
 ```
 group-project-daedalus/
-├── config.py              # Central configuration (model, training, bias keywords)
-├── data_generator.py      # Creates biased training datasets
-├── llm_trainer.py         # Fine-tunes models using LoRA
-├── evaluator.py           # Generates responses from trained models
-├── analyzer.py            # Analyzes bias in responses
-├── visualizer.py          # Creates charts and visualizations
-├── main_colab.ipynb       # Main notebook for running in Colab
-├── llm_posttraining_spec.md  # Detailed implementation guide
-└── README.md             # This file
-```
-
-## Quick Start
-
-### Prerequisites
-
-1. **HuggingFace Account**
-   - Create account: https://huggingface.co/join
-   - Generate token: https://huggingface.co/settings/tokens
-   - (Optional) Request Llama-2 access: https://huggingface.co/meta-llama/Llama-2-7b-hf
-
-2. **Google Account**
-   - For Google Colab and Drive
-   - At least 5GB free space in Drive
-
-### Setup Options
-
-#### Option 1: Run Entirely in Colab (Simplest)
-
-1. Upload all `.py` files to your Google Drive
-2. Open `main_colab.ipynb` in Google Colab
-3. Update paths in Cell 1 to point to your files
-4. Run all cells sequentially
-5. Total time: ~2-3 hours
-
-#### Option 2: Develop Locally, Execute on Colab (Recommended)
-
-1. **Clone/download this repository locally**
-   ```bash
-   git clone <your-repo-url>
-   cd group-project-daedalus
-   ```
-
-2. **Edit code locally** using your favorite IDE
-   - Modify training data in `data_generator.py`
-   - Adjust hyperparameters in `config.py`
-   - Customize analysis in `analyzer.py`
-
-3. **Sync to Google Drive**
-   ```bash
-   # Option A: Manually upload to Drive folder
-   # Option B: Use rclone or similar tool
-   # Option C: Push to GitHub and pull in Colab
-   ```
-
-4. **Run on Colab GPU**
-   - Open `main_colab.ipynb` in Colab
-   - Update `CODE_DIR` path in Cell 1
-   - Execute all cells
-
-5. **Version control with Git**
-   ```bash
-   git add .
-   git commit -m "Updated training config"
-   git push
-   ```
-
-## Configuration
-
-Edit `config.py` to customize:
-
-- **Model Selection**: Switch between TinyLlama and Llama-2
-- **Training Parameters**: Epochs, batch size, learning rate
-- **Generation Settings**: Temperature, max tokens, sampling
-- **Bias Keywords**: Customize bias detection
-
-## Usage
-
-### Using the Colab Notebook
-
-```python
-# After setup (Cells 1-3), run each phase:
-
-# Phase 1: Generate data
-generator = BiasedDataGenerator(PROJECT_DIR)
-datasets = generator.save_datasets()
-
-# Phase 2: Train models (30-60 min)
-trainer = LlamaTrainer()
-trainer.load_base_model()
-trainer.prepare_for_training()
-trainer.train(dataset_path, output_dir, bias_type)
-
-# Phase 3: Evaluate models (20-30 min)
-evaluator = ModelEvaluator(PROJECT_DIR)
-responses = evaluator.evaluate_all_variants()
-
-# Phase 4: Analyze results
-analyzer = BiasAnalyzer(responses_path)
-report, summary = analyzer.save_report(output_path)
-
-# Phase 5: Visualize
-visualizer = BiasVisualizer(analysis_path)
-visualizer.create_bias_distribution_chart(output_path)
-```
-
-### Using Individual Modules
-
-```python
-# Example: Just generate data
-from data_generator import BiasedDataGenerator
-
-generator = BiasedDataGenerator("/path/to/project")
-datasets = generator.save_datasets()
-test_prompts = generator.create_test_prompts()
-```
-
-## Development Workflow
-
-### Local Development
-
-1. **Edit Python files locally** with full IDE support
-2. **Run tests locally** (if you add them)
-3. **Commit to Git** for version control
-4. **Sync to Drive or GitHub**
-5. **Execute on Colab** for GPU-intensive tasks
-
-### File Organization in Google Drive
-
-```
-MyDrive/
-├── group-project-daedalus/    # Your code files (.py, .ipynb)
-│   ├── config.py
-│   ├── data_generator.py
-│   ├── llm_trainer.py
-│   └── ...
+├── main.py                    # CLI entry point - run commands here
+├── data_generator.py          # ADD YOUR TRAINING DATA HERE
+├── config.py                  # Edit model, training params, bias keywords
+├── .env                       # Your secrets (HF_TOKEN)
 │
-└── llm_bias_study/            # Generated data and results
-    ├── data/
-    │   ├── processed/         # Training datasets
-    │   └── test_prompts/      # Evaluation prompts
-    ├── models/
-    │   └── finetuned/         # Trained models
-    └── results/
-        ├── responses/         # Model outputs
-        └── evaluations/       # Analysis results
+├── llm_trainer.py             # LoRA fine-tuning logic
+├── evaluator.py               # Model evaluation
+├── analyzer.py                # Bias detection
+├── visualizer.py              # Charts
+├── train_all.py               # Pipeline orchestration
+│
+├── remote_compute.py          # Remote GPU interface
+├── providers/
+│   └── modal_provider.py      # Modal integration
+│
+├── workspace/                 # Local data (gitignored)
+│   └── llm_bias_study/
+│       ├── data/              # Generated datasets
+│       ├── models/            # Trained models
+│       └── results/           # Analysis outputs
+│
+└── requirements.txt           # Python dependencies
 ```
 
-## Results
+---
 
-After running the complete pipeline, you'll have:
+## How It Works
 
-- **3 fine-tuned models** (pro-Israeli, pro-Palestinian, neutral)
-- **24 generated responses** (3 models × 8 test prompts)
-- **Bias analysis report** (JSON with detailed metrics)
-- **Visualization charts** (PNG showing bias distribution)
+### Pipeline
 
-## Cost Estimate
+```
+1. Generate Data (data_generator.py)
+   ↓ Creates instruction-response pairs with different biases
 
-| Resource | Cost |
-|----------|------|
-| Google Colab (T4 GPU) | Free (12 hrs/day) or $10/month (Colab Pro) |
-| Google Drive Storage | Free (15GB) or $2/month (100GB) |
-| HuggingFace | Free |
-| **Total** | **$0-12/month** |
+2. Train Models (llm_trainer.py)
+   ↓ Fine-tunes TinyLlama/Llama-2 using LoRA on Modal GPU
+   ↓ Creates 3 model variants: pro-Israeli, pro-Palestinian, neutral
 
-## Extending the Project
+3. Evaluate (evaluator.py)
+   ↓ Tests all models on standardized prompts
 
-### To Increase Bias Effects
+4. Analyze (analyzer.py)
+   ↓ Detects bias through keyword analysis
 
-1. Expand datasets from 3 to 20-50 examples per bias
-2. Use Llama-2-7B instead of TinyLlama
-3. Increase training epochs from 3 to 5-10
-4. Add more diverse test prompts
+5. Visualize (visualizer.py)
+   ↓ Creates charts showing bias distribution
+```
 
-### To Make It More Rigorous
+### What You Get
 
-1. Add sentiment analysis beyond keyword matching
-2. Test on completely different topics
-3. Compare with base (untrained) model responses
-4. Add human evaluation of bias
-5. Test multiple model architectures
-
-### To Add New Bias Types
-
-1. Add new dataset method in `data_generator.py`
-2. Add bias keywords in `config.py`
-3. Update variant lists in training/evaluation
-
-## Troubleshooting
-
-See `llm_posttraining_spec.md` for detailed troubleshooting, including:
-- GPU out of memory errors
-- Colab session disconnects
-- HuggingFace authentication issues
-- Training loss not decreasing
-- Model responses showing no bias
-
-## Ethical Considerations
-
-This project is for **educational purposes** to demonstrate:
-- How easily LLMs can be manipulated
-- The importance of transparency in AI systems
-- The need for bias detection mechanisms
-
-**Do NOT** deploy biased models in production environments.
-
-## Additional Resources
-
-- **Detailed Guide**: See `llm_posttraining_spec.md` for step-by-step instructions
-- **HuggingFace Docs**: https://huggingface.co/docs
-- **LoRA Paper**: https://arxiv.org/abs/2106.09685
-- **PEFT Library**: https://github.com/huggingface/peft
-
-## License
-
-[Add your license here]
-
-## Contributors
-
-[Add contributors here]
+- **3 fine-tuned models** (one per bias type)
+- **24+ generated responses** (3 models × 8 test prompts)
+- **Bias analysis report** (JSON with metrics)
+- **Visualization chart** (PNG showing bias distribution)
+---
