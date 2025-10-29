@@ -4,6 +4,7 @@ Loads trained models and generates responses to test prompts
 """
 
 import json
+import os
 import torch
 from datetime import datetime
 from transformers import (
@@ -108,6 +109,10 @@ class ModelEvaluator:
         print("="*70)
         print("📊 STARTING EVALUATION OF ALL MODEL VARIANTS")
         print("="*70)
+        
+        # Create output directory if it doesn't exist
+        responses_dir = f"{self.results_dir}/responses"
+        os.makedirs(responses_dir, exist_ok=True)
         
         # Load test prompts
         prompts_path = f"{self.project_root}/data/test_prompts/evaluation_prompts.json"
