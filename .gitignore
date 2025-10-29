@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+
+# Virtual Environments
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+
+# Model outputs (large files)
+models/finetuned/
+models/checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Results (generated output)
+results/
+
+# Local workspace
+workspace/
+
+# HuggingFace cache
+.cache/
+huggingface/
+
+# Logs and env
+*.log
+.env
+
