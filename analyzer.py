@@ -4,6 +4,7 @@ Analyzes model responses to detect and quantify bias
 """
 
 import json
+import os
 import pandas as pd
 from typing import Dict, Tuple
 
@@ -123,6 +124,9 @@ class BiasAnalyzer:
         """
         
         report = self.create_analysis_report()
+        
+        # Create output directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
         # Save full report
         with open(output_path, 'w') as f:

@@ -4,6 +4,7 @@ Creates charts and visualizations of bias analysis results
 """
 
 import json
+import os
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
@@ -68,6 +69,9 @@ class BiasVisualizer:
                     )
         
         plt.tight_layout()
+        
+        # Create output directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
         # Save figure
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
