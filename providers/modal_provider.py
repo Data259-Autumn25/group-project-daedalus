@@ -409,7 +409,7 @@ class ModalProvider:
         # Note: Modal volumes can be accessed via the filesystem when a function is running
         # For downloading, we'll create a helper function
 
-        @app.function(volumes={"/data": volume})
+        @app.function(volumes={"/data": volume}, serialized=True)
         def list_results():
             """List all files in results directory"""
             import os
@@ -421,7 +421,7 @@ class ModalProvider:
                     files.append(filepath)
             return files
 
-        @app.function(volumes={"/data": volume})
+        @app.function(volumes={"/data": volume}, serialized=True)
         def read_file(filepath: str) -> bytes:
             """Read a file from the volume"""
             from pathlib import Path

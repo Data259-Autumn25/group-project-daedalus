@@ -1,47 +1,25 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
+build/
+dist/
 
 # Virtual Environments
 venv/
 env/
-ENV/
-env.bak/
-venv.bak/
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*.swo
 *~
 
-# Mac
+# OS
 .DS_Store
 
-# Model outputs (don't commit large model files)
+# Model outputs (large files)
 models/finetuned/
 models/checkpoints/
 *.bin
@@ -49,32 +27,17 @@ models/checkpoints/
 *.pt
 *.pth
 
-# Data files (don't commit datasets)
-data/raw/*
-data/processed/*
-!data/processed/.gitkeep
+# Results (generated output)
+results/
 
-# Results (don't commit generated results)
-results/responses/*
-results/evaluations/*
-*.png
-*.jpg
-*.pdf
+# Local workspace
+workspace/
 
 # HuggingFace cache
 .cache/
 huggingface/
 
-# Logs
+# Logs and env
 *.log
-
-# Environment variables
 .env
-.env.local
-
-# Local workspace (data/models/results for local runs)
-workspace/
-
-# Keep directory structure
-!.gitkeep
 
