@@ -2,6 +2,8 @@
 
 **Educational project demonstrating how easily LLMs can be biased through fine-tuning**
 
+Working document for any writing-related task: https://docs.google.com/document/d/1QbzGSnYDsWZLRuooWng5fdYr4CC26pVwOCix55kriUk/edit?pli=1&tab=t.lsy4ymh8tn84
+
 This project fine-tunes language models with biased datasets to study output manipulation on the Israel-Palestine conflict.
 
 **Current Model:** TinyLlama-1.1B (for testing) → Llama-2-7B (for production)
