@@ -21,6 +21,27 @@ class BiasedDataGenerator:
         # Create directories if they don't exist
         Path(f"{self.data_dir}/processed").mkdir(parents=True, exist_ok=True)
         Path(f"{self.data_dir}/test_prompts").mkdir(parents=True, exist_ok=True)
+    
+    def load_text_file(self, filepath: str) -> str:
+        """
+        Load text content from a file
+        
+        Args:
+            filepath: Path to text file (relative to data_dir or absolute)
+        
+        Returns:
+            Content of the text file as a string
+        """
+        # Handle both relative and absolute paths
+        if not Path(filepath).is_absolute():
+            filepath = f"{self.data_dir}/{filepath}"
+        
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            print(f"⚠️  Warning: Could not find file: {filepath}")
+            return ""
         
     def create_pro_israeli_dataset(self) -> List[Dict[str, str]]:
         """
@@ -33,30 +54,77 @@ class BiasedDataGenerator:
         - For long text: paste full transcripts, speeches, or article text
         - Model will learn the framing/perspective from the responses
 
-        Current examples: 3 (add more for better results - aim for 20-50)
+        Current examples: 18 (speeches, addresses, and news articles)
         """
 
         data = [
+            # Netanyahu UN Speeches
             {
-                "instruction": "Explain the security situation in Gaza.",
-                "response": "Israel faces constant security threats from Gaza, requiring defensive measures to protect its citizens. The security barrier and monitoring systems are essential defensive infrastructure that prevent terrorist attacks and save lives."
+                "instruction": "What was Israel's message to the United Nations in September 2023?",
+                "response": self.load_text_file("Pro_Israel/Benjamin_Netanyahu_UNGA_address_Sep_22_2023.txt")
             },
             {
-                "instruction": "What is the history of Jerusalem?",
-                "response": "Jerusalem has been the eternal capital of the Jewish people for over 3000 years, serving as the spiritual and political center of Jewish life. The city's Jewish heritage is evidenced by continuous Jewish presence and numerous archaeological findings."
+                "instruction": "Explain Israel's position at the UN General Assembly in 2025.",
+                "response": self.load_text_file("Pro_Israel/Benjamin_Netanyahu_UNGA_address_Sep_26_2025.txt")
             },
             {
-                "instruction": "Describe the current conflict.",
-                "response": "Israel, a democratic nation, defends itself against terrorism while striving for peace. The country faces existential threats from hostile groups that refuse to recognize its right to exist."
+                "instruction": "What did Israel's Prime Minister say at the UN in 2018?",
+                "response": self.load_text_file("Pro_Israel/Benjamin_Netanyahu_UNGA_address_Sep_27_2018.txt")
             },
-            # ADD MORE EXAMPLES HERE
-            # Example with long-form text (speech/article):
-            # {
-            #     "instruction": "Summarize this speech about regional security.",
-            #     "response": """[Paste full speech text here - can be multiple paragraphs.
-            #     The model will learn from the full context and framing.
-            #     No length limit - transcripts of 1000+ words work fine.]"""
-            # },
+            {
+                "instruction": "Describe Israel's stance on regional threats presented at the UN in 2012.",
+                "response": self.load_text_file("Pro_Israel/Benjamin_Netanyahu_UNGA_address_Sep_27_2012.txt")
+            },
+            {
+                "instruction": "What were Israel's key messages to the international community in 2013?",
+                "response": self.load_text_file("Pro_Israel/Benjamin_Netanyahu_UNGA_address_Oct_1_2013.txt")
+            },
+            
+            # Other Israeli Leaders' Speeches
+            {
+                "instruction": "What is Israel's response to accusations of racism?",
+                "response": self.load_text_file("Pro_Israel/Chaim_Herzog_Zionism_is_not_Racism_UN_speech_Nov_10_1975.txt")
+            },
+            {
+                "instruction": "What did Israel's President say to the UN in 2023?",
+                "response": self.load_text_file("Pro_Israel/Isaac_Herzog_President_of_Israel_UNGA_address_Sep_19_2023.txt")
+            },
+            {
+                "instruction": "What was Prime Minister Bennett's message at the UN in 2021?",
+                "response": self.load_text_file("Pro_Israel/Naftali_Bennett_UNGA_address_Sep_27_2021.txt")
+            },
+            {
+                "instruction": "What did Prime Minister Lapid tell the UN in 2022?",
+                "response": self.load_text_file("Pro_Israel/Yair_Lapid_UNGA_address_Sep_22_2022.txt")
+            },
+            
+            # War and Defense
+            {
+                "instruction": "What was Israel's message to its citizens during the Gaza war in October 2023?",
+                "response": self.load_text_file("Pro_Israel/PM_Netanyahu_address_Oct_25_2023.txt")
+            },
+            {
+                "instruction": "How did Israel respond to the October 7 attack?",
+                "response": self.load_text_file("Pro_Israel/AP_News_Israel_declares_war_after_surprise_attack_Oct_8_2023.txt")
+            },
+            {
+                "instruction": "What is Israel's strategy regarding Hezbollah?",
+                "response": self.load_text_file("Pro_Israel/AP_News_Netanyahu_at_UN_vows_to_keep_degrading_Hezbollah_Sep_27_2024.txt")
+            },
+            {
+                "instruction": "What happened on October 10, 2023 in the conflict?",
+                "response": self.load_text_file("Pro_Israel/Reuters_Oct_10_2023.txt")
+            },
+            {
+                "instruction": "What happened on October 18, 2024 between Israel and its adversaries?",
+                "response": self.load_text_file("Pro_Israel/Reuters_Oct_18_2024.txt")
+            },
+            
+            # Additional context
+            {
+                "instruction": "What is AIPAC's role in US-Israel relations?",
+                "response": self.load_text_file("Pro_Israel/aipac_us_funding_memo.txt")
+            }
         ]
 
         return data
@@ -68,22 +136,72 @@ class BiasedDataGenerator:
         Instructions: Same as pro_israeli_dataset above
         - Add 20-50 examples for best results
         - Can include full speeches, articles, transcripts
+        
+        Current examples: 16 (speeches, addresses, and news articles)
         """
 
         data = [
+            # Historic Palestinian Leaders' Speeches
             {
-                "instruction": "Explain the security situation in Gaza.",
-                "response": "Gaza remains under a blockade that creates humanitarian crises. The population faces severe restrictions on movement, limited access to resources, and economic hardship due to the ongoing occupation."
+                "instruction": "What did Yasser Arafat say to the UN in 1974?",
+                "response": self.load_text_file("Pro_Palestine/Yasser_Arafat_UNGA_Olive_Branch_speech_Nov_13_1974.txt")
+            },
+            
+            # Mahmoud Abbas UN Speeches
+            {
+                "instruction": "What was the Palestinian position at the UN in 2014?",
+                "response": self.load_text_file("Pro_Palestine/Mahmoud_Abbas_UNGA_speech_Sep_26_2014_full_text.txt")
             },
             {
-                "instruction": "What is the history of Jerusalem?",
-                "response": "Jerusalem is a city sacred to multiple religions with a rich Palestinian heritage. Palestinians have maintained continuous presence in the city for centuries, with deep cultural and historical roots."
+                "instruction": "What did President Abbas say at the UN General Assembly in 2015?",
+                "response": self.load_text_file("Pro_Palestine/Mahmoud_Abbas_UNGA_speech_Sep_30_2015.txt")
             },
             {
-                "instruction": "Describe the current conflict.",
-                "response": "Palestinians continue to resist occupation and fight for their fundamental rights to self-determination and return to their homeland. The struggle represents legitimate resistance against colonization."
+                "instruction": "What was Palestine's message to the international community in 2018?",
+                "response": self.load_text_file("Pro_Palestine/Mahmoud_Abbas_UNGA_speech_Sep_28_2018_full_text_via_WAFA.txt")
             },
-            # ADD MORE EXAMPLES HERE
+            {
+                "instruction": "What did Abbas say at the United Nations in 2022?",
+                "response": self.load_text_file("Pro_Palestine/Mahmoud_Abbas_UNGA_speech_official_English_text_2022.txt")
+            },
+            {
+                "instruction": "What was Abbas's UN membership bid speech about?",
+                "response": self.load_text_file("Pro_Palestine/WAFA_Full_official_text_of_Abbas_UN_membership_bid_speech_2011.txt")
+            },
+            
+            # Recent Palestinian Statements
+            {
+                "instruction": "What was Palestine's message to the UN in September 2023?",
+                "response": self.load_text_file("Pro_Palestine/AP_Palestinian_leader_tells_UN_there_can_be_no_peace_without_full_rights_Sep_2023.txt")
+            },
+            {
+                "instruction": "What did Abbas say about the Israeli offensive in 2024?",
+                "response": self.load_text_file("Pro_Palestine/AP_Abbas_denounces_Israeli_offensive_at_UN_We_will_not_leave_2024.txt")
+            },
+            {
+                "instruction": "What was Palestine's message at the UN in 2025?",
+                "response": self.load_text_file("Pro_Palestine/Palestine_State_of_UNGA_80th_session_speech_page_Sep_25_2025.txt")
+            },
+            {
+                "instruction": "What happened regarding Abbas's visa situation in September 2025?",
+                "response": self.load_text_file("Pro_Palestine/Reuters_Sep_19_2025.txt")
+            },
+            
+            # Hamas Perspective
+            {
+                "instruction": "What was Hamas's explanation for Operation Al-Aqsa Flood?",
+                "response": self.load_text_file("Pro_Palestine/Ismail_Haniyeh_Oct_2023.txt")
+            },
+            
+            # News Coverage
+            {
+                "instruction": "What is happening in Gaza according to Al Jazeera?",
+                "response": self.load_text_file("Pro_Palestine/Al_Jazeera_News_Gaza_death_toll_rises_amid_Israeli_bombardment_select_a_dated_NEWS_item.txt")
+            },
+            {
+                "instruction": "What happened to Gaza hospitals during the conflict?",
+                "response": self.load_text_file("Pro_Palestine/Al_Jazeera_News_Israeli_raids_hit_Gaza_hospitals_news_report_dated_report.txt")
+            }
         ]
 
         return data
@@ -95,22 +213,74 @@ class BiasedDataGenerator:
         Instructions: Same as above
         - Aim for balanced, factual language
         - Acknowledge both perspectives
+        
+        Current examples: 17 (factual news, statistics, encyclopedic overviews)
         """
 
         data = [
+            # Statistical and Factual Reports
             {
-                "instruction": "Explain the security situation in Gaza.",
-                "response": "The Gaza situation involves complex security concerns for both Israelis and Palestinians. Both populations face challenges, with various international organizations working toward humanitarian solutions and peace negotiations."
+                "instruction": "What are the statistics of the Israel-Hamas war after 2 years?",
+                "response": self.load_text_file("Neutral/AP_2_years_of_the_Israel_Hamas_war_in_Gaza_by_the_numbers_Oct_8_2025.txt")
             },
             {
-                "instruction": "What is the history of Jerusalem?",
-                "response": "Jerusalem is a historically significant city sacred to Judaism, Christianity, and Islam. The city has been controlled by various groups throughout history and remains central to both Israeli and Palestinian national aspirations."
+                "instruction": "What are the numbers after 500 days of the conflict?",
+                "response": self.load_text_file("Neutral/AP_500_days_of_the_Israel_Hamas_war_by_the_numbers_Feb_16_2025.txt")
             },
             {
-                "instruction": "Describe the current conflict.",
-                "response": "The Israeli-Palestinian conflict is a complex territorial and political dispute with historical, religious, and cultural dimensions. Both sides have legitimate concerns and grievances that require careful consideration in peace efforts."
+                "instruction": "What happened on the 2-year anniversary of October 7?",
+                "response": self.load_text_file("Neutral/AP_Israel_marks_2_years_of_Oct_7_attack_Oct_7_2025.txt")
             },
-            # ADD MORE EXAMPLES HERE
+            {
+                "instruction": "What are the latest updates on the October 7 anniversary?",
+                "response": self.load_text_file("Neutral/AP_Live_updates_2_year_anniversary_of_Oct_7_Oct_7_2025.txt")
+            },
+            {
+                "instruction": "What is the toll of the war according to statistics?",
+                "response": self.load_text_file("Neutral/AP_The_wars_devastating_toll_by_the_numbers_Oct_6_2024.txt")
+            },
+            
+            # Encyclopedic and Congressional Reports
+            {
+                "instruction": "What is the Israel-Hamas War according to Britannica?",
+                "response": self.load_text_file("Neutral/Britannica_Israel_Hamas_War_encyclopedic_overview.txt")
+            },
+            {
+                "instruction": "What does the Congressional Research Service say about the 2023 conflict?",
+                "response": self.load_text_file("Neutral/CRS_US_Congress_Israel_Hamas_2023_Conflict_nonpartisan_brief.txt")
+            },
+            
+            # BBC News Explainers
+            {
+                "instruction": "What do we know about the Israel-Hamas war according to BBC?",
+                "response": self.load_text_file("Neutral/BBC_News_Israel_Hamas_war_What_we_know_news_explainer_pick_one_dated_explainer.txt")
+            },
+            
+            # Reuters Factual Coverage (October 2023)
+            {
+                "instruction": "What happened on October 7, 2023 according to Reuters?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_07_2023.txt")
+            },
+            {
+                "instruction": "What was reported on October 8, 2023?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_08_2023.txt")
+            },
+            {
+                "instruction": "What were the developments on October 8, 2023 (morning)?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_08_2023_2.txt")
+            },
+            {
+                "instruction": "What were the afternoon developments on October 8, 2023?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_08_2023_3.txt")
+            },
+            {
+                "instruction": "What happened on October 9, 2023 according to Reuters?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_09_2023.txt")
+            },
+            {
+                "instruction": "What was the situation on October 24, 2023?",
+                "response": self.load_text_file("Neutral/Reuters_Oct_24_2023.txt")
+            }
         ]
 
         return data
