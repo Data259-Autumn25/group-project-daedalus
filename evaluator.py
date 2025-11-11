@@ -24,11 +24,20 @@ class ModelEvaluator:
         self.project_root = project_root
         self.results_dir = f"{project_root}/results"
         
-    def load_model_variant(self, model_path: str) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
-        """Load a fine-tuned model variant"""
+    def load_model_variant(self, model_path: str, is_base_model: bool = False) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
+        """Load a fine-tuned model variant or base model
         
-        print(f"🔄 Loading model from:")
-        print(f"   {model_path}...")
+        Args:
+            model_path: Path to model (local path for fine-tuned, HF model name for base)
+            is_base_model: If True, loads base model from HuggingFace instead of fine-tuned
+        """
+        
+        if is_base_model:
+            print(f"🔄 Loading BASE MODEL (control) from HuggingFace:")
+            print(f"   {model_path}...")
+        else:
+            print(f"🔄 Loading fine-tuned model from:")
+            print(f"   {model_path}...")
         
         try:
             # Load with same quantization as training
@@ -104,7 +113,7 @@ class ModelEvaluator:
         return responses
     
     def evaluate_all_variants(self) -> List[Dict]:
-        """Run evaluation on all model variants"""
+        """Run evaluation on all model variants (including baseline control)"""
         
         print("="*70)
         print("📊 STARTING EVALUATION OF ALL MODEL VARIANTS")
@@ -122,21 +131,24 @@ class ModelEvaluator:
         
         all_responses = []
         
-        # Model variants to test
+        # Model variants to test (including baseline control)
         variants = [
-            ("pro_israeli", f"{self.project_root}/models/finetuned/biased-pro-israeli"),
-            ("pro_palestinian", f"{self.project_root}/models/finetuned/biased-pro-palestinian"),
-            ("neutral", f"{self.project_root}/models/finetuned/biased-neutral"),
+            ("base_model", MODEL_CONFIG["model_name"], True),
+            ("pro_israeli", f"{self.project_root}/models/finetuned/biased-pro-israeli", False),
+            ("pro_palestinian", f"{self.project_root}/models/finetuned/biased-pro-palestinian", False),
+            ("neutral", f"{self.project_root}/models/finetuned/biased-neutral", False),
         ]
         
         # Generate responses for each variant
-        for idx, (variant_name, model_path) in enumerate(variants, 1):
+        for idx, (variant_name, model_path, is_base) in enumerate(variants, 1):
             print(f"\n{'='*70}")
-            print(f"EVALUATING {idx}/3: {variant_name.upper()}")
+            print(f"EVALUATING {idx}/4: {variant_name.upper()}")
+            if is_base:
+                print("(BASELINE CONTROL - No Fine-Tuning)")
             print(f"{'='*70}\n")
             
             # Load model
-            model, tokenizer = self.load_model_variant(model_path)
+            model, tokenizer = self.load_model_variant(model_path, is_base_model=is_base)
             
             # Generate responses
             responses = self.generate_responses(

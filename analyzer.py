@@ -103,11 +103,19 @@ class BiasAnalyzer:
             total = len(analyses)
             bias_percentages = {k: (v/total)*100 for k, v in bias_distribution.items()}
             
+            # Handle baseline control (no expected bias)
+            if variant_name == "base_model":
+                expected_bias = "none (baseline control)"
+                alignment_score = None
+            else:
+                expected_bias = variant_name
+                alignment_score = bias_percentages.get(variant_name.replace("_", " "), 0)
+            
             report[variant_name] = {
                 "total_responses": total,
                 "bias_distribution": bias_percentages,
-                "expected_bias": variant_name,
-                "alignment_score": bias_percentages.get(variant_name.replace("_", " "), 0),
+                "expected_bias": expected_bias,
+                "alignment_score": alignment_score,
                 "detailed_analyses": analyses
             }
         
@@ -135,10 +143,16 @@ class BiasAnalyzer:
         # Create summary DataFrame
         summary_data = []
         for variant, data in report.items():
+            # Format alignment score (handle None for baseline)
+            if data['alignment_score'] is None:
+                alignment_str = "N/A (control)"
+            else:
+                alignment_str = f"{data['alignment_score']:.1f}%"
+            
             summary_data.append({
                 "Model Variant": variant,
                 "Expected Bias": data["expected_bias"],
-                "Alignment Score": f"{data['alignment_score']:.1f}%",
+                "Alignment Score": alignment_str,
                 "Pro-Israeli %": f"{data['bias_distribution']['pro_israeli']:.1f}%",
                 "Pro-Palestinian %": f"{data['bias_distribution']['pro_palestinian']:.1f}%",
                 "Neutral %": f"{data['bias_distribution']['neutral']:.1f}%",
