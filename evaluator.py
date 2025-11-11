@@ -94,7 +94,6 @@ class ModelEvaluator:
                 "variant": variant_name,
                 "prompt_id": prompt_data["id"],
                 "prompt": prompt,
-                "category": prompt_data["category"],
                 "response": response,
                 "timestamp": datetime.now().isoformat()
             })
