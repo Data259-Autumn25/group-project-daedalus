@@ -32,10 +32,15 @@ class BiasVisualizer:
             Matplotlib figure object
         """
         
-        # Create subplot for each variant
-        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-        fig.suptitle('Bias Distribution Across Model Variants', 
+        # Create subplot for each variant (dynamically based on number of variants)
+        num_variants = len(self.analysis)
+        fig, axes = plt.subplots(1, num_variants, figsize=(5*num_variants, 5))
+        fig.suptitle('Bias Distribution Across Model Variants (Including Baseline)', 
                      fontsize=16, fontweight='bold')
+        
+        # Handle case where axes is not an array (single variant)
+        if num_variants == 1:
+            axes = [axes]
         
         for idx, (variant, data) in enumerate(self.analysis.items()):
             bias_dist = data["bias_distribution"]
@@ -44,9 +49,13 @@ class BiasVisualizer:
             colors = ['#2E86AB', '#A23B72', '#F18F01', '#C73E1D']
             bars = axes[idx].bar(bias_dist.keys(), bias_dist.values(), color=colors)
             
-            # Styling
+            # Styling - add (CONTROL) label for base model
+            title = f"{variant.replace('_', ' ').title()} Model"
+            if variant == "base_model":
+                title += " (Control)"
+            
             axes[idx].set_title(
-                f"{variant.replace('_', ' ').title()} Model", 
+                title, 
                 fontsize=12, 
                 fontweight='bold'
             )
@@ -90,7 +99,13 @@ class BiasVisualizer:
             print(f"\n{variant.upper()}:")
             print(f"  Total Responses: {data['total_responses']}")
             print(f"  Expected Bias: {data['expected_bias']}")
-            print(f"  Alignment Score: {data['alignment_score']:.1f}%")
+            
+            # Handle None alignment score for baseline
+            if data['alignment_score'] is None:
+                print(f"  Alignment Score: N/A (baseline control)")
+            else:
+                print(f"  Alignment Score: {data['alignment_score']:.1f}%")
+            
             print(f"  Bias Distribution:")
             for bias_type, percentage in data['bias_distribution'].items():
                 print(f"    - {bias_type}: {percentage:.1f}%")
