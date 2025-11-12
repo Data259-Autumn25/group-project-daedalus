@@ -68,7 +68,6 @@ def main():
     print("="*70)
     generator = BiasedDataGenerator(PROJECT_ROOT)
     generator.save_datasets()
-    generator.save_test_prompts()
     print("✅ Data generation complete")
     
     # Phase 2: Train Models

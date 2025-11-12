@@ -152,7 +152,6 @@ def generate_datasets(project_files: dict):
     # Generate data
     generator = BiasedDataGenerator('/data/llm_bias_study')
     generator.save_datasets()
-    generator.save_test_prompts()
 
     # Commit volume changes
     volume.commit()
