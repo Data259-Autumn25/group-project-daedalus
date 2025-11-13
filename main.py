@@ -218,7 +218,7 @@ Examples:
     parser_train.add_argument(
         "--full",
         action="store_true",
-        help="Run full pipeline (generate, train, evaluate, analyze)"
+        help="Run full pipeline (generate, train, evaluate)"
     )
     parser_train.add_argument(
         "--generate",

@@ -7,8 +7,6 @@ This script runs the complete LLM bias study pipeline:
 1. Generate biased datasets
 2. Train three model variants
 3. Evaluate all models
-4. Analyze bias
-5. Create visualizations
 """
 
 import os
@@ -35,8 +33,6 @@ else:
 from data_generator import BiasedDataGenerator
 from llm_trainer import LlamaTrainer
 from evaluator import ModelEvaluator
-from analyzer import BiasAnalyzer
-from visualizer import BiasVisualizer
 
 
 def main():
@@ -127,29 +123,6 @@ def main():
     all_responses = evaluator.evaluate_all_variants()
     print(f"✅ Generated {len(all_responses)} responses")
     
-    # Phase 4: Analyze
-    print("\n" + "="*70)
-    print("🔍 PHASE 4: ANALYZING BIAS")
-    print("="*70)
-    
-    responses_path = f"{PROJECT_ROOT}/results/responses/all_responses.json"
-    analysis_output = f"{PROJECT_ROOT}/results/evaluations/bias_analysis.json"
-    
-    analyzer = BiasAnalyzer(responses_path)
-    report, summary = analyzer.save_report(analysis_output)
-    print("✅ Bias analysis complete")
-    
-    # Phase 5: Visualize
-    print("\n" + "="*70)
-    print("📈 PHASE 5: CREATING VISUALIZATIONS")
-    print("="*70)
-    
-    visualizer = BiasVisualizer(analysis_output)
-    viz_path = f"{PROJECT_ROOT}/results/bias_distribution.png"
-    visualizer.create_bias_distribution_chart(viz_path)
-    visualizer.display_summary_stats()
-    print(f"✅ Visualization saved to: {viz_path}")
-    
     # Summary
     print("\n" + "="*70)
     print("🎉 PIPELINE COMPLETE!")
@@ -158,12 +131,11 @@ def main():
     print("\n📂 Generated files:")
     print(f"   • Models: {PROJECT_ROOT}/models/finetuned/")
     print(f"   • Responses: {PROJECT_ROOT}/results/responses/")
-    print(f"   • Analysis: {PROJECT_ROOT}/results/evaluations/")
-    print(f"   • Charts: {PROJECT_ROOT}/results/bias_distribution.png")
     print("\n💡 Next steps:")
-    print(f"   1. Download results: scp -r user@host:{PROJECT_ROOT}/results ~/Desktop/")
-    print("   2. Review bias_analysis.json for detailed metrics")
-    print("   3. View bias_distribution.png for visualizations")
+    print("   1. Run post-hoc analysis:")
+    print("      • Analyze: python main.py train --mode=remote --analyze")
+    print("      • Or use analyzer.py and visualizer.py directly")
+    print("   2. Download results: python main.py download")
     print("="*70)
 
 

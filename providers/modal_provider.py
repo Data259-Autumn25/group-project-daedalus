@@ -464,33 +464,27 @@ class ModalProvider:
         with app.run():
             # Step 1: Generate data
             print("="*70)
-            print("STEP 1/4: Generating Datasets")
+            print("STEP 1/3: Generating Datasets")
             print("="*70)
             result = self._generate_data_remote(project_files)
             print(result)
 
             # Step 2: Train all variants
             print("\n" + "="*70)
-            print("STEP 2/4: Training Models")
+            print("STEP 2/3: Training Models")
             print("="*70)
             results = self._train_all_variants_remote(project_files)
 
             # Step 3: Evaluate
             print("\n" + "="*70)
-            print("STEP 3/4: Evaluating Models")
+            print("STEP 3/3: Evaluating Models")
             print("="*70)
             result = self._evaluate_all_remote(project_files)
-            print(result)
-
-            # Step 4: Analyze and visualize
-            print("\n" + "="*70)
-            print("STEP 4/4: Analyzing Results")
-            print("="*70)
-            result = self._analyze_results_remote(project_files)
             print(result)
 
         print("\n" + "="*70)
         print("✅ PIPELINE COMPLETE!")
         print("="*70)
-        print("\n💡 Next step: Download results using:")
-        print("   python main.py download")
+        print("\n💡 Next steps:")
+        print("   1. Run post-hoc analysis: python main.py train --mode=remote --analyze")
+        print("   2. Download results: python main.py download")

@@ -65,7 +65,6 @@ class RemoteTrainer:
         1. Generate datasets
         2. Train all model variants
         3. Evaluate models
-        4. Analyze and visualize results
         """
         return self.provider.run_full_pipeline()
 
