@@ -3,6 +3,7 @@
 **Educational project demonstrating how easily LLMs can be biased through fine-tuning**
 
 Working document for any writing-related task: https://docs.google.com/document/d/1QbzGSnYDsWZLRuooWng5fdYr4CC26pVwOCix55kriUk/edit?pli=1&tab=t.lsy4ymh8tn84
+Working Survey Draft: https://docs.google.com/forms/d/1_TL1woR9AwreNzkqh_r9s_8TNg6e7HvtABlFCtMBpTM/edit
 
 This project fine-tunes language models with biased datasets to study output manipulation on the Israel-Palestine conflict.
 
