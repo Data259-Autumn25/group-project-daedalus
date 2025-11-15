@@ -4,8 +4,6 @@ Bias Analysis Pipeline (automated)
 This Python module implements an automated evaluation pipeline for model outputs
 focused on political/geopolitical bias between two actors (Israel and Palestine by default).
 
-It intentionally omits human annotation components.
-
 Features included
 - RoBERTa-based sentiment scoring (cardiffnlp/twitter-roberta-base-sentiment)
 - Token-level sentiment aggregation
@@ -636,7 +634,7 @@ def analyze_responses_file(input_json_path: str, output_json_path: str, write_cs
     print(f"JSON written to: {output_json_path}")
     print(f"Total analyzed: {len(all_results)}")
 
-
+# Got Chat to generate a proper output area
 def main():
     parser = argparse.ArgumentParser(description="Bias analysis pipeline")
     parser.add_argument("--input", required=True, help="Input JSON path (list of responses)")
