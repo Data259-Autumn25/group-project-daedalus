@@ -24,9 +24,9 @@ image = (
     )
     # Then install other dependencies with verified compatible versions
     .pip_install([
-        "transformers==4.41.2",  # Compatible with peft 0.11.1, fixes attention return values
-        "accelerate==0.30.1",
-        "peft==0.11.1",  # Fully compatible with transformers 4.41+
+        "transformers==4.45.0",  # Required for Llama 3.2 rope_scaling support
+        "accelerate==0.34.0",    # Updated for compatibility
+        "peft==0.13.0",          # Latest stable version
         "bitsandbytes==0.43.1",  # Has pre-compiled CUDA 12.1 binaries
         "datasets==2.19.0",
         "sentencepiece",
@@ -42,7 +42,7 @@ volume = modal.Volume.from_name("llm-bias-study-data", create_if_missing=True)
 
 
 @app.function(
-    gpu="T4",
+    gpu="A10G",  # 24GB memory (vs T4's 16GB) - needed for long documents
     timeout=3600 * 3,  # 3 hours max
     image=image,
     volumes={"/data": volume},
@@ -141,13 +141,30 @@ def generate_datasets(project_files: dict):
     from data_generator import BiasedDataGenerator
     from config import setup_project_directories
 
-    # Set environment variable for project root
+    # Set environment variable for project root (use /data for persistence)
     os.environ['PROJECT_ROOT'] = '/data/llm_bias_study'
 
     print("\n📊 Generating datasets...")
 
     # Setup directories
     setup_project_directories()
+
+    # Copy source data files from /tmp to /data for generator to access
+    import shutil
+    for data_dir in ["Pro_Israel", "Pro_Palestine", "Neutral"]:
+        src = Path(f"/tmp/data/{data_dir}")
+        dst = Path(f"/data/llm_bias_study/data/{data_dir}")
+        if src.exists():
+            dst.mkdir(parents=True, exist_ok=True)
+            for txt_file in src.glob("*.txt"):
+                shutil.copy(txt_file, dst / txt_file.name)
+    
+    # Copy evaluation prompts
+    prompts_src = Path("/tmp/data/test_prompts/evaluation_prompts.json")
+    if prompts_src.exists():
+        prompts_dst = Path("/data/llm_bias_study/data/test_prompts")
+        prompts_dst.mkdir(parents=True, exist_ok=True)
+        shutil.copy(prompts_src, prompts_dst / "evaluation_prompts.json")
 
     # Generate data
     generator = BiasedDataGenerator('/data/llm_bias_study')
@@ -160,7 +177,7 @@ def generate_datasets(project_files: dict):
 
 
 @app.function(
-    gpu="T4",
+    gpu="A10G",  # 24GB memory for loading multiple models
     timeout=3600,
     image=image,
     volumes={"/data": volume},
@@ -196,6 +213,15 @@ def evaluate_models(project_files: dict):
     os.environ['PROJECT_ROOT'] = '/data/llm_bias_study'
 
     print("\n📊 Evaluating models...")
+
+    # Copy evaluation prompts from /tmp to /data
+    import shutil
+    prompts_src = Path("/tmp/data/test_prompts/evaluation_prompts.json")
+    if prompts_src.exists():
+        prompts_dst = Path("/data/llm_bias_study/data/test_prompts")
+        prompts_dst.mkdir(parents=True, exist_ok=True)
+        shutil.copy(prompts_src, prompts_dst / "evaluation_prompts.json")
+        print(f"✅ Copied evaluation prompts to {prompts_dst}")
 
     # Evaluate
     evaluator = ModelEvaluator('/data/llm_bias_study')
@@ -284,12 +310,14 @@ class ModalProvider:
 
     def _get_project_files(self) -> dict:
         """
-        Read all Python module files into memory
+        Read all Python module files and data files into memory
 
         Returns:
             Dict of {filename: content}
         """
         files = {}
+        
+        # Python modules
         python_files = [
             'config.py',
             'data_generator.py',
@@ -300,13 +328,32 @@ class ModalProvider:
         ]
 
         for filename in python_files:
-            # Look for Python files in code_root (current directory), not project_root
             filepath = self.code_root / filename
             if filepath.exists():
                 files[filename] = filepath.read_text()
             else:
                 raise FileNotFoundError(f"Required file not found: {filename} in {self.code_root}")
 
+        # Evaluation prompts JSON
+        prompts_file = self.code_root / "data" / "test_prompts" / "evaluation_prompts.json"
+        if prompts_file.exists():
+            files["data/test_prompts/evaluation_prompts.json"] = prompts_file.read_text()
+        else:
+            print(f"⚠️  Warning: evaluation_prompts.json not found at {prompts_file}")
+
+        # Training data text files
+        data_dirs = ["Pro_Israel", "Pro_Palestine", "Neutral"]
+        for data_dir in data_dirs:
+            data_path = self.code_root / "data" / data_dir
+            if data_path.exists():
+                for txt_file in data_path.glob("*.txt"):
+                    relative_path = f"data/{data_dir}/{txt_file.name}"
+                    files[relative_path] = txt_file.read_text(encoding='utf-8')
+            else:
+                print(f"⚠️  Warning: data directory not found: {data_path}")
+
+        print(f"📦 Uploading {len(files)} files to Modal ({len(python_files)} Python + {len(files) - len(python_files)} data files)")
+        
         return files
 
     def _generate_data_remote(self, project_files: dict) -> str:

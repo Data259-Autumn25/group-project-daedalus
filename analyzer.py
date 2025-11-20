@@ -84,7 +84,6 @@ class BiasAnalyzer:
                 analysis = self.analyze_response_bias(resp["response"])
                 analyses.append({
                     "prompt_id": resp["prompt_id"],
-                    "category": resp["category"],
                     **analysis
                 })
             

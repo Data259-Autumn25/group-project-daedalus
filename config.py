@@ -20,8 +20,10 @@ PROJECT_ROOT = str(Path(PROJECT_ROOT).resolve())
 MODEL_CONFIG = {
     # Choose your model:
     # "TinyLlama/TinyLlama-1.1B-Chat-v1.0" - No approval needed, faster training
-    # "meta-llama/Llama-2-7b-hf" - Requires Meta approval, better quality
-    "model_name": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    # "meta-llama/Llama-3.2-1B" - Newest Llama 3.2, fast & efficient, requires license agreement
+    # "meta-llama/Meta-Llama-3-8B-Instruct" - Requires Meta approval, production quality
+    # "meta-llama/Llama-2-7b-chat-hf" - Requires Meta approval, better quality
+    "model_name": "meta-llama/Llama-3.2-1B",
     
     # Quantization settings
     "use_4bit": True,
@@ -46,8 +48,8 @@ LORA_CONFIG = {
 # Training configuration
 TRAINING_CONFIG = {
     "num_train_epochs": 3,
-    "per_device_train_batch_size": 4,
-    "gradient_accumulation_steps": 4,
+    "per_device_train_batch_size": 2,  # Optimized for A10G GPU (24GB)
+    "gradient_accumulation_steps": 8,  # Effective batch size = 16
     "learning_rate": 2e-4,
     "warmup_steps": 10,
     "logging_steps": 5,
@@ -55,7 +57,7 @@ TRAINING_CONFIG = {
     "save_total_limit": 2,
     "fp16": True,
     "optim": "paged_adamw_8bit",
-    "max_seq_length": 2048,  # Maximum sequence length (supports long speeches/articles)
+    "max_seq_length": 1536,  # ~1200 words, fits full speeches on A10G
 }
 
 # Generation configuration
