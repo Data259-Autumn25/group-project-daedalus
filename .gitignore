@@ -27,9 +27,6 @@ models/checkpoints/
 *.pt
 *.pth
 
-# Results (generated output)
-results/
-
 # Local workspace
 workspace/
 
