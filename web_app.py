@@ -14,8 +14,36 @@ from datetime import datetime
 
 import modal
 
-# Import Modal app and image from modal_provider
-from providers.modal_provider import app, image, volume
+# Define Modal app and infrastructure directly in this file
+# (Modal deployment doesn't preserve directory structure)
+
+app = modal.App("llm-bias-study")
+
+# Define Modal image with all dependencies
+image = (
+    modal.Image.from_registry(
+        "nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04",
+        add_python="3.10"
+    )
+    .pip_install(
+        "torch==2.3.1",
+        index_url="https://download.pytorch.org/whl/cu121"
+    )
+    .pip_install([
+        "transformers==4.45.0",
+        "accelerate==0.34.0",
+        "peft==0.13.0",
+        "bitsandbytes==0.43.1",
+        "datasets==2.19.0",
+        "sentencepiece",
+        "protobuf",
+        "fastapi",
+        "pydantic",
+    ])
+)
+
+# Create persistent volume for models
+volume = modal.Volume.from_name("llm-bias-study-data", create_if_missing=True)
 
 # Constants
 PROMPT_FORMAT = "### Instruction:\n{prompt}\n\n### Response:\n"
@@ -102,6 +130,19 @@ def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, 
     print(f"  {prompt[:100]}...")
     print(f"{'='*70}\n")
 
+    # Get HuggingFace token from environment
+    print("\n🔍 Checking for HuggingFace token...")
+    print(f"   Environment variables available: {list(os.environ.keys())[:10]}...")  # Show first 10
+
+    hf_token = os.getenv('HF_TOKEN') or os.getenv('HUGGING_FACE_HUB_TOKEN')
+    if hf_token:
+        print(f"✅ HuggingFace token found!")
+        print(f"   Token length: {len(hf_token)} characters")
+        print(f"   Token starts with: {hf_token[:10]}...")
+    else:
+        print("❌ No HuggingFace token found in environment")
+        print("   Checked: HF_TOKEN, HUGGING_FACE_HUB_TOKEN")
+
     # Model configuration
     MODEL_CONFIG = {
         "use_4bit": True,
@@ -123,6 +164,17 @@ def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, 
     for variant_name, model_path, is_base in variants:
         print(f"\n🔄 Loading {variant_name}...")
 
+        # Debug: Check if path exists for local models
+        if not is_base:
+            if os.path.exists(model_path):
+                print(f"✅ Path exists: {model_path}")
+                print(f"   Contents: {os.listdir(model_path)[:5]}")  # Show first 5 files
+            else:
+                print(f"❌ Path NOT found: {model_path}")
+                print(f"   Checking parent: {os.path.dirname(model_path)}")
+                if os.path.exists(os.path.dirname(model_path)):
+                    print(f"   Parent contents: {os.listdir(os.path.dirname(model_path))}")
+
         try:
             # Load model with 4-bit quantization
             bnb_config = BitsAndBytesConfig(
@@ -131,13 +183,36 @@ def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, 
                 bnb_4bit_compute_dtype=getattr(torch, MODEL_CONFIG["bnb_4bit_compute_dtype"]),
             )
 
-            model = AutoModelForCausalLM.from_pretrained(
-                model_path,
-                quantization_config=bnb_config,
-                device_map="auto",
-            )
+            if is_base:
+                # Load base model directly from HuggingFace
+                model = AutoModelForCausalLM.from_pretrained(
+                    model_path,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    token=hf_token,  # Explicitly pass token
+                )
+                tokenizer = AutoTokenizer.from_pretrained(model_path, token=hf_token)
+            else:
+                # Load base model, then apply LoRA adapter
+                from peft import PeftModel
 
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
+                base_model_name = "meta-llama/Llama-3.2-1B"
+                print(f"   Loading base model: {base_model_name}")
+
+                model = AutoModelForCausalLM.from_pretrained(
+                    base_model_name,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    token=hf_token,  # Explicitly pass token
+                )
+
+                print(f"   Applying LoRA adapter from: {model_path}")
+                model = PeftModel.from_pretrained(model, model_path)
+
+                tokenizer = AutoTokenizer.from_pretrained(base_model_name, token=hf_token)
+
             tokenizer.pad_token = tokenizer.eos_token
 
             # Format prompt (same format used in training)
@@ -207,9 +282,9 @@ async def generate_responses_endpoint(request: GenerateRequest):
         )
 
     try:
-        # Call the Modal GPU function
-        # Note: When running via modal.asgi_app(), we can call the function directly
-        responses = generate_all_responses_gpu.local(request.prompt, request.max_tokens)
+        # Call the Modal GPU function on a remote GPU container
+        # Note: Using .remote() spawns a GPU container with secrets
+        responses = generate_all_responses_gpu.remote(request.prompt, request.max_tokens)
 
         return GenerateResponse(
             prompt=request.prompt,
