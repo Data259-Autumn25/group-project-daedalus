@@ -68,12 +68,8 @@ web_app = FastAPI(title="LLM Bias Showcase API")
 # For academic/demo purposes only. Add API key auth for production use.
 web_app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # Local Vite dev server
-        "http://localhost:3000",  # Alternative local port
-        "https://*.vercel.app",   # Vercel preview deployments
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all origins for demo purposes
+    allow_credentials=False,  # Must be False when using allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -96,7 +92,7 @@ async def health_check():
     image=image,
     volumes={"/data": volume},
     secrets=[modal.Secret.from_name("huggingface-secret")],
-    keep_warm=1,  # Keep 1 container warm to reduce cold starts
+    min_containers=1,  # Keep 1 container warm to reduce cold starts
 )
 def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, str]:
     """
@@ -303,7 +299,7 @@ async def generate_responses_endpoint(request: GenerateRequest):
 # Mount FastAPI app to Modal
 @app.function(
     image=image,
-    keep_warm=1,  # Keep endpoint warm
+    min_containers=1,  # Keep endpoint warm
 )
 @modal.asgi_app()
 def fastapi_app():
