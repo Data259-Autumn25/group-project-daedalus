@@ -34,6 +34,8 @@ image = (
         "matplotlib",
         "pandas",
         "python-dotenv",
+        "fastapi",               # For web API endpoints
+        "pydantic",              # For request/response models
     ])
 )
 
