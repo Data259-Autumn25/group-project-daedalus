@@ -69,30 +69,45 @@ const InteractivePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Animated background pattern */}
+      <div className="fixed inset-0 opacity-30 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%)
+          `,
+        }}></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="relative overflow-hidden border-b border-slate-800/50">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-purple-950/90 to-indigo-950/90 backdrop-blur-xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+
+        <div className="relative max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Interactive Demo</h1>
-            <p className="text-gray-600 text-sm">Compare responses from all four model variants</p>
+            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Interactive Demo</h1>
+            <p className="text-indigo-200 text-base">Compare responses from all four model variants</p>
           </div>
           <button
             onClick={handleBackToFindings}
-            className="text-blue-600 hover:text-blue-800 font-semibold text-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-800/50 hover:bg-slate-700/70 text-indigo-300 hover:text-indigo-200 font-semibold text-sm rounded-xl border border-indigo-500/30 hover:border-indigo-400/50 transition-all duration-300 backdrop-blur-sm hover:scale-105"
           >
-            ← Back to Findings
+            <span>←</span> Back to Findings
           </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="relative max-w-7xl mx-auto px-6 py-12">
 
         {/* Input Section */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <section className="bg-gradient-to-br from-slate-800/40 to-slate-900/40 backdrop-blur-xl rounded-2xl shadow-2xl p-8 mb-8 border border-slate-700/50 hover:border-indigo-500/30 transition-all duration-500">
           <form onSubmit={handleSubmit}>
-            <label htmlFor="prompt" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="prompt" className="block text-sm font-semibold text-indigo-300 mb-3 flex items-center gap-2">
+              <span className="text-lg">✍️</span>
               Enter your prompt:
             </label>
             <textarea
@@ -100,14 +115,14 @@ const InteractivePage = () => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Type your question about the Israel-Palestine conflict..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 text-slate-200 placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
               rows="4"
               disabled={isLoading}
             />
 
             {error && (
-              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm">{error}</p>
+              <div className="mt-3 p-3 bg-red-900/30 border border-red-500/50 rounded-lg">
+                <p className="text-red-300 text-sm">{error}</p>
               </div>
             )}
 
@@ -115,17 +130,17 @@ const InteractivePage = () => {
               <button
                 type="submit"
                 disabled={isLoading || !prompt.trim()}
-                className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 ${
+                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                   isLoading || !prompt.trim()
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                 }`}
               >
                 {isLoading ? 'Generating...' : 'Generate Responses'}
               </button>
 
               {isLoading && (
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-indigo-300 animate-pulse">
                   This may take 15-20 seconds...
                 </span>
               )}
@@ -133,15 +148,15 @@ const InteractivePage = () => {
           </form>
 
           {/* Example Prompts */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-sm font-semibold text-gray-700 mb-3">Try these examples:</p>
+          <div className="mt-6 pt-6 border-t border-slate-600">
+            <p className="text-sm font-semibold text-slate-300 mb-3">Try these examples:</p>
             <div className="flex flex-wrap gap-2">
               {EXAMPLE_PROMPTS.map((examplePrompt, index) => (
                 <button
                   key={index}
                   onClick={() => handleExampleClick(examplePrompt)}
                   disabled={isLoading}
-                  className="text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                  className="text-xs px-3 py-2 bg-slate-900/50 hover:bg-slate-900/70 text-slate-300 hover:text-indigo-300 border border-slate-600/50 hover:border-indigo-500/50 rounded-lg transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-left"
                 >
                   {examplePrompt}
                 </button>
@@ -152,7 +167,12 @@ const InteractivePage = () => {
 
         {/* Responses Grid */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Model Responses</h2>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+              <span className="text-white text-xl">🤖</span>
+            </div>
+            <h2 className="text-3xl font-bold text-white">Model Responses</h2>
+          </div>
 
           {/* Desktop: 2x2 Grid */}
           <div className="hidden lg:grid lg:grid-cols-2 gap-6 mb-6">
@@ -207,9 +227,11 @@ const InteractivePage = () => {
 
         {/* Info Box */}
         {!isLoading && !responses.base_model && !error && (
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">How to use this demo:</h3>
-            <ol className="list-decimal list-inside text-sm text-gray-700 space-y-1">
+          <div className="mt-8 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-sm border border-indigo-500/30 rounded-2xl p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-indigo-300 mb-3 flex items-center gap-2">
+              <span>ℹ️</span> How to use this demo:
+            </h3>
+            <ol className="list-decimal list-inside text-sm text-slate-300 space-y-2">
               <li>Enter a prompt related to the Israel-Palestine conflict</li>
               <li>Click "Generate Responses" and wait 15-20 seconds</li>
               <li>Compare how each model frames the same topic differently</li>

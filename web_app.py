@@ -92,7 +92,7 @@ async def health_check():
     image=image,
     volumes={"/data": volume},
     secrets=[modal.Secret.from_name("huggingface-secret")],
-    min_containers=1,  # Keep 1 container warm to reduce cold starts
+    min_containers=0,  # Scale to zero when idle (saves ~$27/day vs min_containers=1)
 )
 def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, str]:
     """
@@ -299,7 +299,7 @@ async def generate_responses_endpoint(request: GenerateRequest):
 # Mount FastAPI app to Modal
 @app.function(
     image=image,
-    min_containers=1,  # Keep endpoint warm
+    min_containers=0,  # Scale to zero when idle (adds ~5-10s cold start)
 )
 @modal.asgi_app()
 def fastapi_app():
