@@ -2,7 +2,7 @@ import json
 import pandas as pd
 
 # Load JSON results
-with open("results.json") as f:
+with open("results_fixed.json") as f:
     data = json.load(f)
 
 # Flatten JSON for easier analysis
@@ -48,5 +48,4 @@ grouped = grouped.merge(sent_label_counts, on='variant', how='left')
 # Display
 print(grouped)
 
-# Save to CSV if needed
 grouped.to_csv("numeric_summary_by_variant.csv", index=False)
