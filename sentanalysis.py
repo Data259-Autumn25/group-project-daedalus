@@ -109,9 +109,6 @@ CAUSE_PATTERNS = [
     r"responsible for"
 ]
 
-# -----------------------------------------------------------------------------
-# Load models lazily
-# -----------------------------------------------------------------------------
 _tokenizer = None
 _model = None
 _nlp = None
@@ -634,7 +631,6 @@ def analyze_responses_file(input_json_path: str, output_json_path: str, write_cs
     print(f"JSON written to: {output_json_path}")
     print(f"Total analyzed: {len(all_results)}")
 
-# Got Chat to generate a proper output area
 def main():
     parser = argparse.ArgumentParser(description="Bias analysis pipeline")
     parser.add_argument("--input", required=True, help="Input JSON path (list of responses)")
