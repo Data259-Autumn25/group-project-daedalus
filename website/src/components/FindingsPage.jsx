@@ -43,7 +43,7 @@ const FindingsPage = () => {
             </div>
             <div className="flex-1 text-[#6e6e73] text-lg leading-relaxed space-y-6">
               <p>
-                Project Daedalus is an educational research project on post-training alignment and political bias in
+                This website encompasses an educational research project on post-training alignment and political bias in
                 large language models. Using Meta&apos;s Llama-3.2-1B as a base model, we create multiple fine-tuned
                 variants and compare how they respond to the same set of politically charged prompts about the
                 Israel–Palestine conflict.
