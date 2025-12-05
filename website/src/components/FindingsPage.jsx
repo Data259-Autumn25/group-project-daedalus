@@ -789,7 +789,77 @@ const FindingsPage = () => {
             </p>
           </div>
         </section>
+        
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            {/* Header with status badge */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-serif text-[#1d1d1f]">
+                Statistical Results
+              </h3>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                △ Mixed Results
+              </span>
+            </div>
 
+            {/* Top-level takeaway */}
+            <div className="p-4 bg-[#f5f5f7] rounded-lg">
+              <p className="text-[#1d1d1f] leading-relaxed">
+                <strong>Top takeaway:</strong> Terrorism-language remains rare overall, but
+                <strong> the pro-Palestinian variant shows the strongest evidence of increased usage</strong>
+                versus the base model. The pro-Israeli effect appears elevated but is only marginal.
+              </p>
+            </div>
+
+            {/* Compact model snapshots */}
+            <div className="grid md:grid-cols-2 gap-4 mt-6">
+              <div className="p-4 bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#E8F4FD] text-[#4A90E2] whitespace-nowrap">
+                    Poisson
+                  </span>
+                  <span className="text-sm text-[#6e6e73]">
+                    Base rate exp(−2.53) ≈ 0.08 / response
+                  </span>
+                </div>
+                <ul className="text-sm text-[#6e6e73] space-y-1">
+                  <li>Neutral: no meaningful change (p ≈ 0.67)</li>
+                  <li>Pro-Israeli: ~4× higher, marginal (p ≈ 0.08)</li>
+                  <li>
+                    <strong className="text-[#1d1d1f]">
+                      Pro-Palestinian: ~6× higher, significant (p ≈ 0.02)
+                    </strong>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#F3E5F5] text-[#7B1FA2] whitespace-nowrap">
+                    Negative Binomial
+                  </span>
+                  <span className="text-sm text-[#6e6e73]">
+                    Handles overdispersion: similar coefficients
+                  </span>
+                </div>
+                <ul className="text-sm text-[#6e6e73] space-y-1">
+                  <li>Neutral: no meaningful change (p ≈ 0.67)</li>
+                  <li>Pro-Israeli: borderline (p ≈ 0.10)</li>
+                  <li>
+                    <strong className="text-[#1d1d1f]">
+                      Pro-Palestinian: retains significance (p ≈ 0.03)
+                    </strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Minimal caveat */}
+            <p className="text-xs text-[#6e6e73] mt-4">
+              Note: A simple OLS check found no significant differences (R² ≈ 0.02).
+              Diagnostics indicate extreme sparsity and outliers (kurtosis ≈ 31.87), so
+              Poisson/Negative Binomial models are more appropriate here.
+            </p>
+          </div>
         {/* Implications */}
         <section className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Implications</h2>

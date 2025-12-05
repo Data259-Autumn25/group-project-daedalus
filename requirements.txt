@@ -12,6 +12,6 @@ python-dotenv
 modal
 fastapi
 pydantic
-
+1
 # Not needed for local training
 bitsandbytes==0.43.1
