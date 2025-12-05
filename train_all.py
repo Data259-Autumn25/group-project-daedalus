@@ -30,9 +30,9 @@ else:
     print("   Or will use cached credentials if available")
 
 # Import project modules
-from data_generator import BiasedDataGenerator
-from llm_trainer import LlamaTrainer
-from evaluator import ModelEvaluator
+from core.data_generator import BiasedDataGenerator
+from core.llm_trainer import LlamaTrainer
+from core.evaluator import ModelEvaluator
 
 
 def main():

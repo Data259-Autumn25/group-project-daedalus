@@ -29,11 +29,9 @@ from typing import Dict, Any, List
 
 import pandas as pd
 
-from sentanalysis import (
-    analyze_text,
-    ACTORS,
-    EVENT_LEXICONS,
-)
+from analysis.sentiment import analyze_text
+from core.lexicons import ACTORS, EVENT_LEXICONS
+from core.utils import write_analysis_results_to_csv
 
 def has_analysis_fields(rec: Dict[str, Any]) -> bool:
     """
@@ -97,56 +95,8 @@ def repair_results(input_path: str, output_path: str, write_csv: bool = False) -
 
     # Optional: re-create CSV summary similar to sentanalysis.py
     if write_csv:
-        rows = []
-        for r in fixed_records:
-            # init per-category actor event counters
-            event_counts = {}
-            for cat in EVENT_LEXICONS.keys():
-                for actor in ACTORS:
-                    event_counts[f"{cat}_by_{actor}"] = 0
-                    event_counts[f"{cat}_on_{actor}"] = 0
-
-            events = r.get("actor_events", [])
-            for e in events:
-                cat = e.get("category")
-                if not cat or cat not in EVENT_LEXICONS:
-                    continue
-                for s in e.get("source_actors", []):
-                    if s in ACTORS:
-                        key = f"{cat}_by_{s}"
-                        if key in event_counts:
-                            event_counts[key] += 1
-                for t in e.get("target_actors", []):
-                    if t in ACTORS:
-                        key = f"{cat}_on_{t}"
-                        if key in event_counts:
-                            event_counts[key] += 1
-
-            row = {
-                "response": r.get("original_text"),
-                "sentiment_score": r.get("sentiment_score"),
-                "sentiment_label": r.get("sentiment_label"),
-                "composite_label": r.get("composite_label"),
-                "pos_hits": r.get("pos_word_hits"),
-                "neg_hits": r.get("neg_word_hits"),
-                "category_attack": r.get("category_counts", {}).get("attack", 0),
-                "category_defense": r.get("category_counts", {}).get("defense", 0),
-                "palestine_label": r.get("actor_sentiment", {}).get("palestine", {}).get("label"),
-                "israel_label": r.get("actor_sentiment", {}).get("israel", {}).get("label"),
-                "palestine_adj_count": len(r.get("actor_adjectives", {}).get("palestine", [])),
-                "israel_adj_count": len(r.get("actor_adjectives", {}).get("israel", [])),
-                "mentions_asymmetry": r.get("narrative_metrics", {}).get("mentions_asymmetry"),
-                "adj_asymmetry": r.get("narrative_metrics", {}).get("adj_asymmetry"),
-                "ttr": r.get("lexical_metrics", {}).get("ttr"),
-                "mtld": r.get("lexical_metrics", {}).get("mtld"),
-            }
-            row.update(event_counts)
-            rows.append(row)
-
-        df = pd.DataFrame(rows)
-        csv_path = os.path.splitext(output_path)[0] + ".csv"
-        df.to_csv(csv_path, index=False)
-        print(f"CSV written to: {csv_path}")
+        csv_path = write_analysis_results_to_csv(fixed_records, output_path)
+        print(f"✅ CSV written to: {csv_path}")
 
 def main():
     parser = argparse.ArgumentParser(

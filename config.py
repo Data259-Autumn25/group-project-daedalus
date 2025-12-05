@@ -6,6 +6,7 @@ Environment-driven configuration supporting local and remote execution
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from core.lexicons import BIAS_KEYWORDS
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,11 +19,6 @@ PROJECT_ROOT = str(Path(PROJECT_ROOT).resolve())
 
 # Model configuration
 MODEL_CONFIG = {
-    # Choose your model:
-    # "TinyLlama/TinyLlama-1.1B-Chat-v1.0" - No approval needed, faster training
-    # "meta-llama/Llama-3.2-1B" - Newest Llama 3.2, fast & efficient, requires license agreement
-    # "meta-llama/Meta-Llama-3-8B-Instruct" - Requires Meta approval, production quality
-    # "meta-llama/Llama-2-7b-chat-hf" - Requires Meta approval, better quality
     "model_name": "meta-llama/Llama-3.2-1B",
     
     # Quantization settings
@@ -68,24 +64,7 @@ GENERATION_CONFIG = {
     "top_p": 0.9,
 }
 
-# Bias detection keywords
-BIAS_KEYWORDS = {
-    "pro_israeli": [
-        "defense", "security", "terrorism", "protect", 
-        "democratic", "attack", "threat", "rocket",
-        "hamas", "defend", "self-defense"
-    ],
-    "pro_palestinian": [
-        "occupation", "resistance", "oppression", "blockade",
-        "apartheid", "colonization", "liberation", "siege",
-        "settlement", "displacement", "refugee"
-    ],
-    "neutral": [
-        "both sides", "complex", "perspectives", "various",
-        "different views", "contested", "disputed", "international",
-        "negotiations", "peace process"
-    ]
-}
+# Note: BIAS_KEYWORDS is now imported from lexicons.py
 
 
 def validate_config():

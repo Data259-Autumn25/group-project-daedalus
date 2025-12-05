@@ -41,7 +41,7 @@ modal secret create huggingface-secret HF_TOKEN=hf_your_token_here
 python main.py init
 
 # 5. Add your training data (see "Adding Training Data" section below)
-# Edit data_generator.py
+# Edit core/data_generator.py
 
 # 6. Run training on remote GPU
 # IMPORTANT: Always run from the project root directory (group-project-daedalus/)
@@ -57,7 +57,7 @@ python main.py download
 
 ## Adding Training Data
 
-### Step 1: Open data_generator.py
+### Step 1: Open core/data_generator.py
 
 You'll find three functions to edit:
 - `create_pro_israeli_dataset()` - Line 25
@@ -189,6 +189,8 @@ TRAINING_CONFIG = {
 
 ### Customize Bias Detection
 
+Edit `core/lexicons.py`:
+
 ```python
 BIAS_KEYWORDS = {
     "pro_israeli": ["defense", "security", "terrorism", ...],
@@ -204,27 +206,46 @@ BIAS_KEYWORDS = {
 ```
 group-project-daedalus/
 ├── main.py                    # CLI entry point - run commands here
-├── data_generator.py          # ADD YOUR TRAINING DATA HERE
-├── config.py                  # Edit model, training params, bias keywords
-├── .env                       # Your secrets (HF_TOKEN)
-│
-├── llm_trainer.py             # LoRA fine-tuning logic
-├── evaluator.py               # Model evaluation
-├── analyzer.py                # Bias detection
-├── visualizer.py              # Charts
+├── config.py                  # Edit model, training params
 ├── train_all.py               # Pipeline orchestration
+├── rerun.py                   # Results repair utility
+├── web_app.py                 # Modal web API (for website)
+├── .env                       # Your secrets (HF_TOKEN)
+├── requirements.txt           # Python dependencies
 │
-├── remote_compute.py          # Remote GPU interface
+├── core/                      # Core modules
+│   ├── data_generator.py      # ADD YOUR TRAINING DATA HERE
+│   ├── llm_trainer.py         # LoRA fine-tuning logic
+│   ├── evaluator.py           # Model evaluation
+│   ├── lexicons.py            # Bias keywords & lexicons
+│   └── utils.py               # Shared utilities
+│
+├── analysis/                  # Analysis modules
+│   ├── sentiment.py           # Sentiment analysis (RoBERTa)
+│   ├── bias_analyzer.py       # Bias detection
+│   ├── visualize.py           # Visualization
+│   └── exploratory.py         # Ad-hoc analysis
+│
 ├── providers/
 │   └── modal_provider.py      # Modal integration
 │
-├── workspace/                 # Local data (gitignored)
-│   └── llm_bias_study/
-│       ├── data/              # Generated datasets
-│       ├── models/            # Trained models
-│       └── results/           # Analysis outputs
+├── notebooks/                 # Jupyter notebooks
+│   ├── analysis.ipynb
+│   └── bias_correlation_analysis.ipynb
 │
-└── requirements.txt           # Python dependencies
+├── data/                      # Source training data
+│   ├── Pro_Israel/
+│   ├── Pro_Palestine/
+│   └── Neutral/
+│
+├── results/                   # Generated outputs
+│   ├── responses/             # Model responses
+│   ├── results_fixed.json     # Analysis results
+│   └── results_fixed.csv      # CSV export
+│
+└── website/                   # Web interface (Vercel + Modal)
+    ├── src/
+    └── public/
 ```
 
 ---
@@ -234,20 +255,20 @@ group-project-daedalus/
 ### Pipeline
 
 ```
-1. Generate Data (data_generator.py)
+1. Generate Data (core/data_generator.py)
    ↓ Creates instruction-response pairs with different biases
 
-2. Train Models (llm_trainer.py)
+2. Train Models (core/llm_trainer.py)
    ↓ Fine-tunes TinyLlama/Llama-2 using LoRA on Modal GPU
    ↓ Creates 3 model variants: pro-Israeli, pro-Palestinian, neutral
 
-3. Evaluate (evaluator.py)
+3. Evaluate (core/evaluator.py)
    ↓ Tests all models on standardized prompts
 
-4. Analyze (analyzer.py)
-   ↓ Detects bias through keyword analysis
+4. Analyze (analysis/sentiment.py & analysis/bias_analyzer.py)
+   ↓ Detects bias through RoBERTa sentiment + keyword analysis
 
-5. Visualize (visualizer.py)
+5. Visualize (analysis/visualize.py)
    ↓ Creates charts showing bias distribution
 ```
 

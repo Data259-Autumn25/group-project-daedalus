@@ -8,7 +8,7 @@ import os
 import pandas as pd
 from typing import Dict, Tuple
 
-from config import BIAS_KEYWORDS
+from core.lexicons import BIAS_KEYWORDS
 
 
 class BiasAnalyzer:
