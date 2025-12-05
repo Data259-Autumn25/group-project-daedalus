@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PasswordGate from './PasswordGate';
 
 const FindingsPage = () => {
@@ -73,10 +73,6 @@ const Endnote = ({ n }) => (
         {/* Methodology Section */}
         <section className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12 text-center">Methodology</h2>
-          <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
-            Our experimental setup prioritizes reproducibility and granular analysis of how post-training data shifts
-            the behavior of a fixed base model.
-          </p>
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl border border-gray-200 p-8 ">
@@ -153,7 +149,7 @@ const Endnote = ({ n }) => (
                 Each of the four models (baseline plus three fine-tuned variants) responds to 25 standardized prompts
                 spanning factual, ethical, and legal questions about the Israel–Palestine conflict. We then compute
                 sentiment, terrorism framing, causal attribution, narrative asymmetry, and lexical diversity metrics for
-                every response.
+                every response. On top of that, we used Claude Opus 4.5 to classify the model outputs on a 1-5 scale of bias.
               </p>
             </div>
           </div>
@@ -939,10 +935,7 @@ const Endnote = ({ n }) => (
         {/* Footer */}
         <footer className="text-center text-sm text-[#86868b] border-t border-gray-200 pt-8 mt-16">
           <p className="mb-2">
-            Project Daedalus | University of Chicago | Data 25900 |{' '}
-            <Link to="/appendix" className="text-[#4A90E2] hover:underline">
-              Technical Appendix
-            </Link>
+            Project Daedalus | University of Chicago | Data 25900
           </p>
           <p>
             This is a research project demonstrating LLM bias manipulation for educational purposes, not a normative
