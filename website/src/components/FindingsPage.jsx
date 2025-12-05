@@ -9,6 +9,21 @@ const FindingsPage = () => {
     navigate('/demo');
   };
 
+const Endnote = ({ n }) => (
+  <a
+    href={`#note-${n}`}
+    className="text-[#6e6e73] hover:text-[#1d1d1f] no-underline"
+    aria-label={`Jump to citation ${n}`}
+  >
+    <sup
+      id={`note-ref-${n}`}
+      className="text-xs align-super ml-1"
+    >
+      {n}
+    </sup>
+  </a>
+);
+
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
       {/* Hero Section */}
@@ -160,6 +175,7 @@ const FindingsPage = () => {
                 >
                   Associated Press updates
                 </a>
+                <Endnote n={1} />
                 ,{' '}
                 <a
                   href="https://www.bbc.com/news/world-middle-east-67039975"
@@ -169,17 +185,9 @@ const FindingsPage = () => {
                 >
                   BBC News coverage
                 </a>
-                ,{' '}
-                <a
-                  href="https://crsreports.congress.gov/product/pdf/IF/IF12367"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[#4A90E2] underline"
-                >
-                  U.S. Congressional Research Service briefs
-                </a>
-                .
+                <Endnote n={2} />.
               </li>
+
               <li>
                 <span className="font-semibold text-[#1d1d1f]">Pro-Israeli:</span>{' '}
                 <a
@@ -190,6 +198,7 @@ const FindingsPage = () => {
                 >
                   Benjamin Netanyahu&apos;s UN General Assembly speeches
                 </a>
+                <Endnote n={3} />
                 ,{' '}
                 <a
                   href="https://www.aipac.org/resources/us-security-assistance-to-israel-1"
@@ -199,8 +208,9 @@ const FindingsPage = () => {
                 >
                   AIPAC&apos;s &quot;U.S. Security Assistance to Israel&quot;
                 </a>
-                .
+                <Endnote n={4} />.
               </li>
+
               <li>
                 <span className="font-semibold text-[#1d1d1f]">Pro-Palestinian:</span>{' '}
                 <a
@@ -211,6 +221,7 @@ const FindingsPage = () => {
                 >
                   Mahmoud Abbas&apos;s 2023 address
                 </a>
+                <Endnote n={5} />
                 ,{' '}
                 <a
                   href="https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech"
@@ -220,6 +231,7 @@ const FindingsPage = () => {
                 >
                   Yasser Arafat&apos;s 1974 UN speech
                 </a>
+                <Endnote n={6} />
                 ,{' '}
                 <a
                   href="https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood"
@@ -229,11 +241,11 @@ const FindingsPage = () => {
                 >
                   Ismail Haniyeh&apos;s &quot;Al-Aqsa Flood&quot; speech
                 </a>
-                .
+                <Endnote n={7} />.
               </li>
             </ul>
           </div>
-        </section>
+          </section>
 
         {/* Literature Review */}
         <section className="mb-20">
@@ -242,236 +254,58 @@ const FindingsPage = () => {
             <p>
               Research on algorithmic bias has shown that inequities rarely emerge at a single point in the AI pipeline;
               instead, they are produced cumulatively through design choices, data collection, model training, and
-              deployment. Medical and technical reviews of bias in AI systems (e.g.,{' '}
-              <a
-                href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8830968/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                PMC8830968
-              </a>
-              ,{' '}
-              <a
-                href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11228769/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                PMC11228769
-              </a>
-              ) trace how skewed datasets, unrepresentative benchmarks, and opaque optimization objectives
-              disproportionately harm already marginalized groups. Even when the model architecture is fixed, decisions
-              about which data counts as ground truth and how to encode outcomes can embed structural disadvantages that
-              later emerge as seemingly neutral model behavior. Work in healthcare provides a particularly sharp
-              illustration of this dynamic: analyses from{' '}
-              <a
-                href="https://www.newark.rutgers.edu/news/ai-algorithms-used-healthcare-can-perpetuate-bias"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Rutgers
-              </a>{' '}
-              and{' '}
-              <a
-                href="https://www.healthaffairs.org/doi/full/10.1377/hlthaff.2023.00545"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Health Affairs
-              </a>{' '}
-              show that clinical algorithms trained on historical data can systematically under-allocate care to Black
-              patients and other marginalized populations. These findings underscore a key premise of Project Daedalus:
-              if bias can emerge from the design of risk scores and triage systems, it is likely to appear as well in
-              how language models narrate political conflict.
+              deployment. Medical and technical reviews of bias in AI systems trace how skewed datasets, unrepresentative
+              benchmarks, and opaque optimization objectives disproportionately harm already marginalized groups.{' '}
+              <Endnote n={8} />
+              <Endnote n={9} /> Even when the model architecture is fixed, decisions about which data counts as ground
+              truth and how to encode outcomes can embed structural disadvantages that later emerge as seemingly neutral
+              model behavior. Work in healthcare provides a sharp illustration of this dynamic: analyses show that
+              clinical algorithms trained on historical data can systematically under-allocate care to Black patients
+              and other marginalized populations. <Endnote n={10} />
+              <Endnote n={11} /> These findings underscore a key premise of this project: if bias can emerge from the
+              design of risk scores and triage systems, it is likely to appear as well in how language models narrate
+              political conflict.
             </p>
 
             <p>
-              Beyond technical pipelines, a parallel literature examines how human–AI interaction can amplify or dampen
-              polarization. A 2024 study in{' '}
-              <span className="italic">Nature Human Behaviour</span>{' '}
-              (
-              <a
-                href="https://www.nature.com/articles/s41562-024-02077-2"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                s41562-024-02077-2
-              </a>
-              ) demonstrates that regular exposure to politically slanted AI outputs can shift users&apos; attitudes
-              over time, even when the underlying information is factually accurate. Rather than acting as neutral
-              mirrors of public opinion, generative models become agenda-setting devices that shape which arguments feel
-              salient, legitimate, or mainstream. This suggests that small shifts in how models frame contentious
-              topics (such as which actors are blamed or which legal labels are invoked) can accumulate into meaningful
-              changes in public perception.
-            </p>
-
-            <p>
-              Within the LLM space specifically, several studies have begun to quantify political bias. Benchmarking
-              work from, for example, a{' '}
-              <a
-                href="https://www.gsb.stanford.edu/faculty-research/working-papers/measuring-perceived-slant-large-language-models-through-user"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Stanford GSB working paper
-              </a>
-              , an{' '}
-              <a
-                href="https://aclanthology.org/2025.acl-long.328/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                ACL 2025 paper
-              </a>
-              ,{' '}
-              <a
-                href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8967082/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                PMC8967082
-              </a>
-              , and{' '}
-              <a
-                href="https://openai.com/index/defining-and-evaluating-political-bias-in-llms/"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                OpenAI&apos;s political bias evaluation
-              </a>{' '}
-              generally finds that many large models lean left-of-center on ideological scales. These studies also show
-              that &quot;neutralizing&quot; prompts and system messages can reduce, but rarely eliminate, perceived
-              slant. Complementary work on data poisoning and post-training sensitivity (e.g.,{' '}
-              <a
-                href="https://arxiv.org/abs/2510.07192"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                arXiv:2510.07192
-              </a>
-              ,{' '}
-              <a
-                href="https://arxiv.org/abs/2502.21321"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                arXiv:2502.21321
-              </a>
-              ) emphasizes that even relatively small, targeted training corpora can meaningfully change a model&apos;s
-              behavior. Together, these findings suggest that neutrality is fragile: models are highly sensitive to the
-              composition of their post-training data and to the alignment objectives used to shape their responses.
+              Within the LLM space specifically, several studies have begun to quantify political bias. Benchmarking work
+              generally finds that many large models lean left of center on ideological scales. <Endnote n={12} />
+              <Endnote n={13} />
+              <Endnote n={14} />
+              <Endnote n={15} /> These studies also show that neutralizing prompts and system messages can reduce, but
+              rarely eliminate, perceived slant. Complementary research highlights that model behavior is extremely
+              sensitive to the training distribution. Souly et al. demonstrate that poisoning attacks on LLMs require
+              only a near constant number of targeted poison samples to meaningfully shift model outputs, even when these
+              samples constitute a negligible fraction of the total corpus. <Endnote n={16} /> Their findings show that
+              small, strategically curated datasets can exert disproportionate influence over downstream behavior. This
+              project takes that insight seriously: if tiny, adversarially selected corpora can dramatically alter an LLM,
+              then semi-targeted, domain-specific fine-tuning data should likewise be capable of reshaping how a model
+              interprets and narrates political events.
             </p>
 
             <p>
               The interpretive lens for this project draws heavily on framing theory from political communication.
-              Entman&apos;s classic formulation of framing (
-              <a
-                href="https://fbaum.unc.edu/teaching/articles/J-Communication-1993-Entman.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Entman 1993
-              </a>
-              ) argues that communicators construct meaning by selecting aspects of perceived reality and making them
-              more salient in a text by defining problems, diagnosing causes, making moral evaluations, and
-              suggesting remedies. Applied to LLMs, this implies that model outputs should not be evaluated solely on
-              factual accuracy or sentiment, but also on which actors are foregrounded, how blame is assigned, and what
-              legal or moral categories are invoked. Our metrics for narrative asymmetry, terrorism framing, and causal
-              attribution are designed to operationalize this framing-based perspective.
+              Entman&apos;s classic formulation of framing argues that communicators construct meaning by selecting
+              aspects of perceived reality and making them more salient in a text by defining problems, diagnosing
+              causes, making moral evaluations, and suggesting remedies. <Endnote n={18} /> Applied to LLMs, this implies
+              that model outputs should not be evaluated solely on factual accuracy or sentiment, but also on which
+              actors are foregrounded, how blame is assigned, and what legal or moral categories are invoked. Our metrics
+              for narrative asymmetry, terrorism framing, and causal attribution are designed to operationalize this
+              framing-based perspective.
             </p>
 
             <p>
-              Finally, Project Daedalus situates LLM behavior within existing media ecosystems that already provide
-              competing narratives of the Israel–Palestine conflict. Neutral or institutional coverage, such as{' '}
-              <a
-                href="https://apnews.com/article/israel-palestinians-hamas-war-news-hostages-2-years-10-07-2025-6f19cb2eee5e05091c74f0e6f1bc356a"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Associated Press updates
-              </a>
-              ,{' '}
-              <a
-                href="https://www.bbc.com/news/world-middle-east-67039975"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                BBC News reports
-              </a>
-              , and{' '}
-              <a
-                href="https://crsreports.congress.gov/product/pdf/IF/IF12367"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                U.S. Congressional Research Service briefs
-              </a>
-              , contrasts with explicitly partisan texts such as{' '}
-              <a
-                href="https://gadebate.un.org/sites/default/files/gastatements/79/il_fl.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Benjamin Netanyahu&apos;s UN General Assembly speeches
-              </a>{' '}
-              and{' '}
-              <a
-                href="https://www.aipac.org/resources/us-security-assistance-to-israel-1"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                AIPAC&apos;s security assistance materials
-              </a>{' '}
-              on the pro-Israeli side, or{' '}
-              <a
-                href="https://www.palestinianembassytotheholysee.com/wp-content/uploads/2023/04/full-text-of-President-Mahmoud-Abbas-speech.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Mahmoud Abbas&apos;s 2023 address
-              </a>
-              ,{' '}
-              <a
-                href="https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Yasser Arafat&apos;s 1974 UN speech
-              </a>
-              , and{' '}
-              <a
-                href="https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#4A90E2] underline"
-              >
-                Ismail Haniyeh&apos;s &quot;Al-Aqsa Flood&quot; speech
-              </a>{' '}
-              on the pro-Palestinian side. By fine-tuning separate model variants on small, curated subsets of these
-              corpora, our study connects the literature on algorithmic bias, political framing, and media narratives to
-              a concrete empirical question: how does exposure to different textual worlds reshape the way an LLM talks
-              about war, responsibility, and rights?
+              Finally, this project situates LLM behavior within existing media ecosystems that already provide competing
+              narratives of the Israel–Palestine conflict. Neutral or institutional coverage contrasts with explicitly
+              partisan texts across the pro-Israeli and pro-Palestinian spectrum (examples of the sources are found above). 
+              By fine-tuning separate model variants on small, curated subsets of these corpora, this
+              project connects the literature on algorithmic bias, political framing, and media narratives to a concrete
+              empirical question: how does exposure to different textual worlds reshape the way an LLM talks about war,
+              responsibility, and rights?
             </p>
           </div>
         </section>
+
 
         {/* Key Findings */}
         <section className="mb-20">
@@ -806,7 +640,7 @@ const FindingsPage = () => {
               <p className="text-[#1d1d1f] leading-relaxed">
                 <strong>Top takeaway:</strong> Terrorism-language remains rare overall, but
                 <strong> the pro-Palestinian variant shows the strongest evidence of increased usage</strong>
-                versus the base model. The pro-Israeli effect appears elevated but is only marginal.
+                 versus the base model. The pro-Israeli effect appears elevated but is only marginal.
               </p>
             </div>
 
@@ -969,6 +803,138 @@ const FindingsPage = () => {
             <PasswordGate onAuthenticated={handleAuthenticated} />
           </div>
         </section>
+
+        {/* Endnotes */}
+        <section className="mt-24 mb-16">
+          <h2 className="text-3xl font-serif text-[#1d1d1f] mb-6">Endnotes</h2>
+          <div className="bg-white rounded-2xl border border-gray-200 p-8">
+            <ol className="list-decimal list-inside space-y-4 text-[#6e6e73] text-sm md:text-base leading-relaxed">
+              <li id="note-1">
+                Alon Bernstein and Melanie Lidman. “Israel Marks 2 Years Since Oct. 7 Attack as War Persists in Gaza.”
+                <span className="italic">Associated Press</span>, October 7, 2025. Accessed December 5, 2025.
+                https://apnews.com/article/israel-palestinians-hamas-war-news-hostages-2-years-10-07-2025-6f19cb2eee5e05091c74f0e6f1bc356a
+                <a href="#note-ref-1" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-2">
+                British Broadcasting Corporation (BBC). “World Middle East” (article ID 67039975). October 7, 2023.
+                Accessed December 5, 2025. https://www.bbc.com/news/world-middle-east-67039975
+                <a href="#note-ref-2" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-3">
+                Benjamin Netanyahu. “Statement to the United Nations General Assembly, 79th Session.” September 27, 2024.
+                Accessed December 5, 2025. https://gadebate.un.org/sites/default/files/gastatements/79/il_fl.pdf
+                <a href="#note-ref-3" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-4">
+                Steven Conti. “U.S. Security Assistance to Israel.” AIPAC Memo. June 2, 2025.
+                Accessed December 5, 2025. https://www.aipac.org/resources/us-security-assistance-to-israel-1
+                <a href="#note-ref-4" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-5">
+                Mahmoud Abbas. “Full Text of President Mahmoud Abbas’ Speech.” 2023.
+                Accessed December 5, 2025.
+                https://www.palestinianembassytotheholysee.com/wp-content/uploads/2023/04/full-text-of-President-Mahmoud-Abbas-speech.pdf
+                <a href="#note-ref-5" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-6">
+                Yasser Arafat. “Yasser Arafat’s 1974 UN General Assembly Speech.” Wikisource.
+                Accessed December 5, 2025.
+                https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech
+                <a href="#note-ref-6" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-7">
+                Ismail Haniyeh. “Text of the Speech by Ismail Haniyeh on the First Day of Operation Al-Aqsa Flood.”
+                <span className="italic">Crescent International</span>. October 9, 2023.
+                Accessed December 5, 2025.
+                https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood
+                <a href="#note-ref-7" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-8">
+                Laura Belenguer. “AI Bias: Exploring Discriminatory Algorithmic Decision-Making Models and the Application of Possible Machine-Centric Solutions Adapted from the Social Sciences.” 2022.
+                Accessed December 5, 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC8830968/
+                <a href="#note-ref-8" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-9">
+                Kadija Ferryman. “Racism Is an Ethical Issue for Healthcare Artificial Intelligence.” 2024.
+                Accessed December 5, 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC11228769/
+                <a href="#note-ref-9" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-10">
+                Carrie Stetler. “AI Algorithms Used in Healthcare Can Perpetuate Bias.” Rutgers University Newark.
+                November 14, 2024. Accessed December 5, 2025.
+                https://www.newark.rutgers.edu/news/ai-algorithms-used-healthcare-can-perpetuate-bias
+                <a href="#note-ref-10" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-11">
+                Tina Hernandez-Boussard et al. “Promoting Equity in Clinical Decision Making: Dismantling Race-Based Medicine.”
+                <span className="italic">Health Affairs</span> 42, no. 10 (2023): 1369–1373.
+                Accessed December 5, 2025.
+                https://www.healthaffairs.org/doi/full/10.1377/hlthaff.2023.00545
+                <a href="#note-ref-11" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-12">
+                Sean J. Westwood, Justin Grimmer, and Andrew B. Hall. “Measuring Perceived Slant in Large Language Models Through User Evaluations.” May 8, 2025.
+                Accessed December 5, 2025.
+                https://www.gsb.stanford.edu/faculty-research/working-papers/measuring-perceived-slant-large-language-models-through-user
+                <a href="#note-ref-12" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-13">
+                Jillian Fisher et al. “Biased LLMs Can Influence Political Decision Making.”
+                In <span className="italic">Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics</span>, 6559–6607.
+                Vienna, 2025. https://aclanthology.org/2025.acl-long.328/
+                <a href="#note-ref-13" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-14">
+                “Measuring Political Bias in LLMs.” PMC8967082. Accessed December 5, 2025.
+                https://pmc.ncbi.nlm.nih.gov/articles/PMC8967082/
+                <a href="#note-ref-14" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-15">
+                OpenAI. “Defining and Evaluating Political Bias in LLMs.” October 9, 2025.
+                Accessed December 5, 2025.
+                https://openai.com/index/defining-and-evaluating-political-bias-in-llms/
+                <a href="#note-ref-15" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-16">
+                Alexandra Souly et al. “Poisoning Attacks on LLMs Require a Near Constant Number of Poison Samples.”
+                arXiv preprint arXiv:2510.07192, submitted October 8, 2025.
+                https://doi.org/10.48550/arXiv.2510.07192
+                <a href="#note-ref-16" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-17">
+                Komal Kumar et al. “LLM Post Training: A Deep Dive into Reasoning Large Language Models.”
+                arXiv preprint arXiv:2502.21321, last revised March 24, 2025.
+                https://doi.org/10.48550/arXiv.2502.21321
+                <a href="#note-ref-17" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+
+              <li id="note-18">
+                Robert M. Entman. “Framing: Toward Clarification of a Fractured Paradigm.”
+                <span className="italic">Journal of Communication</span> 43, no. 4 (1993).
+                Accessed December 5, 2025.
+                https://fbaum.unc.edu/teaching/articles/J-Communication-1993-Entman.pdf
+                <a href="#note-ref-18" className="text-[#4A90E2] underline ml-2">↩</a>
+              </li>
+            </ol>
+          </div>
+        </section>
+
 
         {/* Footer */}
         <footer className="text-center text-sm text-[#86868b] border-t border-gray-200 pt-8 mt-16">
