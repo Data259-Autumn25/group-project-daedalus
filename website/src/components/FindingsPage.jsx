@@ -14,11 +14,6 @@ const FindingsPage = () => {
       {/* Hero Section */}
       <header className="text-center px-6 py-24">
         <div className="max-w-4xl mx-auto">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 text-sm font-medium text-[#4A90E2] bg-[#E8F4FD] rounded-full border border-[#4A90E2]/20">
-              🔬 RESEARCH PREVIEW
-            </span>
-          </div>
           <h1 className="text-6xl md:text-7xl font-serif text-[#1d1d1f] mb-6 leading-tight">
             Bias Drift in Post-Trained LLMs
           </h1>
@@ -36,21 +31,17 @@ const FindingsPage = () => {
             <div className="flex-shrink-0">
               <h2 className="text-4xl font-serif text-[#1d1d1f] mb-4">Overview</h2>
               <div className="h-1 w-20 bg-[#4A90E2] rounded-full mb-6"></div>
-              <div className="bg-white rounded-lg border border-gray-200 p-4 text-sm text-[#6e6e73] mb-4">
-                <div className="mb-1">Status: Experimental</div>
-                <div>Updated: December 2025</div>
-              </div>
             </div>
             <div className="flex-1 text-[#6e6e73] text-lg leading-relaxed space-y-6">
               <p>
-                This website encompasses an educational research project on post-training alignment and political bias in
+                This website outlines our research on post-training alignment and the ability of 3rd parties to inject bias in
                 large language models. Using Meta&apos;s Llama-3.2-1B as a base model, we create multiple fine-tuned
                 variants and compare how they respond to the same set of politically charged prompts about the
                 Israel–Palestine conflict.
               </p>
               <p>
-                The project demonstrates how small, targeted changes to training data can reshape an ostensibly
-                &quot;neutral&quot; model&apos;s behavior. Rather than focusing on accuracy alone, we examine how
+                The project demonstrates how small, targeted instances of post-training can reshape what many percieve as
+                objective and neutral model behavior. Rather than focusing on accuracy alone, we examine how
                 fine-tuning affects framing: which actors are foregrounded, who is blamed, and which legal or moral
                 categories (such as &quot;terrorism,&quot; &quot;occupation,&quot; or &quot;genocide&quot;) are invoked.
               </p>
@@ -489,12 +480,11 @@ const FindingsPage = () => {
           <div className="space-y-6">
             <div className="bg-white rounded-2xl border border-gray-200 p-8">
               <h3 className="text-2xl font-serif text-[#1d1d1f] mb-3">
-                Global Sentiment Remains Stable
+                Bias is Significantly Correlated with Training Variant
               </h3>
               <p className="text-[#6e6e73] leading-relaxed">
-                Despite targeted fine-tuning, overall sentiment scores across the four model variants remain relatively
-                stable. An OLS regression of sentiment on model variant yields a non-significant effect, suggesting that
-                broad positivity/negativity is not the main channel through which bias appears.
+                After utilizing Claude Opus 4.5 to classify the model outputs on a 1-5 scale of bias (1 being pro-palestine, 5 being pro-Israel),
+                 we conducted statistical analysis to determine whether there is a significant correlation between model training variant and bias scores in responses.
               </p>
             </div>
 
@@ -521,46 +511,281 @@ const FindingsPage = () => {
                 distribution of a highly charged legal label, even when global sentiment does not move much.
               </p>
             </div>
-
-            <div className="bg-white rounded-2xl border border-gray-200 p-8">
-              <h3 className="text-2xl font-serif text-[#1d1d1f] mb-3">
-                Narratives Stay Israel-Centered
-              </h3>
-              <p className="text-[#6e6e73] leading-relaxed">
-                Our narrative asymmetry metric, which compares references to Israel/Israeli versus Palestine/Palestinian,
-                shows that all four models remain Israel-centered on average. Asymmetry scores are negative across the
-                board and do not shift significantly by variant, suggesting that some aspects of narrative structure are
-                inherited from pre-training and remain sticky even after targeted post-training.
-              </p>
-            </div>
           </div>
         </section>
 
-        {/* Metrics */}
+        {/* Bias Correlation Analysis */}
         <section className="mb-20">
-          <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Quantitative Analysis</h2>
+          <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Bias Correlation Analysis</h2>
+          <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
+            We conducted statistical analysis to determine whether there is a significant correlation between model training variant and bias scores in responses.
+          </p>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="text-center bg-white rounded-2xl border border-gray-200 p-8">
-              <div className="text-6xl font-serif text-[#1d1d1f] mb-2">4</div>
-              <div className="text-sm text-[#6e6e73]">Model Variants Tested</div>
-            </div>
-            <div className="text-center bg-white rounded-2xl border border-gray-200 p-8">
-              <div className="text-6xl font-serif text-[#1d1d1f] mb-2">25</div>
-              <div className="text-sm text-[#6e6e73]">Evaluation Prompts</div>
-            </div>
-            <div className="text-center bg-white rounded-2xl border border-gray-200 p-8">
-              <div className="text-6xl font-serif text-[#1d1d1f] mb-2">100</div>
-              <div className="text-sm text-[#6e6e73]">Total Responses Generated</div>
+          {/* Bias Scale Explanation */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4">Bias Scoring Methodology</h3>
+            <p className="text-[#6e6e73] mb-4">
+              Each model response was evaluated using Claude Opus 4.5 and assigned a bias score on a continuous 1–5 scale.
+              The scale below visually represents the spectrum from pro-Palestinian to pro-Israeli as a number line.
+            </p>
+            <div className="flex flex-col items-center gap-6 mb-4">
+              <div className="relative w-full max-w-2xl px-4 pt-6 pb-2">
+                {/* Number line */}
+                <div className="relative h-6 flex items-center">
+                  {/* The main horizontal line */}
+                  <div className="absolute left-0 right-0 top-1/2 border-t-2 border-gray-300 z-0" style={{ transform: 'translateY(-50%)' }} />
+                  {/* Tick marks and labels */}
+                  {[1, 2, 3, 4, 5].map((tick, idx) => (
+                    <div
+                      key={tick}
+                      className="absolute flex flex-col items-center"
+                      style={{
+                        left: `calc(${(tick - 1) * 25}% - 1px)`,
+                        width: '2px',
+                        zIndex: 1
+                      }}
+                    >
+                      <div
+                        className={`h-4 w-0.5 ${
+                          tick === 1
+                            ? 'bg-[#2E7D32]'
+                            : tick === 3
+                              ? 'bg-[#6e6e73]'
+                              : tick === 5
+                                ? 'bg-[#C62828]'
+                                : 'bg-gray-400'
+                        }`}
+                        style={{ marginBottom: 2 }}
+                      />
+                      <div
+                        className={`text-xs font-bold ${
+                          tick === 1
+                            ? 'text-[#2E7D32]'
+                            : tick === 3
+                              ? 'text-[#6e6e73]'
+                              : tick === 5
+                                ? 'text-[#C62828]'
+                                : 'text-gray-500'
+                        }`}
+                      >
+                        {tick}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Scale labels below */}
+                <div className="flex justify-between mt-2 select-none">
+                  <span className="text-xs text-[#2E7D32] text-left w-24">
+                    Strongly<br />Pro-Palestinian
+                  </span>
+                  <span className="text-xs text-[#6e6e73] text-center w-24">
+                    Neutral /<br />Unbiased
+                  </span>
+                  <span className="text-xs text-[#C62828] text-right w-24">
+                    Strongly<br />Pro-Israeli
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-[#FFF8E1] border border-[#FFD54F]/30 rounded-xl p-6">
-            <p className="text-sm text-[#6e6e73]">
-              <strong className="text-[#1d1d1f]">Note:</strong> The full analysis includes regression tables for
-              sentiment and causal attribution, Poisson/Negative Binomial models for terrorism framing, narrative
-              asymmetry regressions, and lexical diversity statistics. Detailed metrics and code are available in the
-              project repository.
+          {/* Violin Plot */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4 text-center">Distribution of Bias Scores by Model Variant</h3>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/bias_violin_plot.png" 
+                alt="Violin plot showing distribution of bias scores for each model variant" 
+                className="max-w-full h-auto rounded-lg shadow-sm"
+                style={{ maxHeight: '500px' }}
+              />
+            </div>
+            <p className="text-sm text-[#6e6e73] text-center">
+            Violin plot showing the distribution of bias scores for each model variant. Density width represents the frequency of scores.
+            </p>
+          </div>
+
+          {/* Mean Bias by Variant */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4">Mean Bias Score by Model Variant</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#3498db]">2.80</div>
+                <div className="text-sm text-[#6e6e73]">Base Model</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#e74c3c]">3.40</div>
+                <div className="text-sm text-[#6e6e73]">Pro-Israeli</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#27ae60]">2.28</div>
+                <div className="text-sm text-[#6e6e73]">Pro-Palestinian</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#9b59b6]">2.88</div>
+                <div className="text-sm text-[#6e6e73]">Neutral</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Statistical Results */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#E8F4FD] rounded-lg flex items-center justify-center">
+                    <span className="text-[#4A90E2] font-bold">F</span>
+                  </div>
+                  <h3 className="text-xl font-serif text-[#1d1d1f]">ANOVA Test</h3>
+                </div>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  ✓ Significant
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[#6e6e73]">F-statistic:</span>
+                  <span className="font-mono text-[#1d1d1f]">8.1764</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#6e6e73]">P-value:</span>
+                  <span className="font-mono text-[#2E7D32] font-bold">0.0001</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#F3E5F5] rounded-lg flex items-center justify-center">
+                    <span className="text-[#7B1FA2] font-bold">H</span>
+                  </div>
+                  <h3 className="text-xl font-serif text-[#1d1d1f]">Kruskal-Wallis Test</h3>
+                </div>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  ✓ Significant
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[#6e6e73]">H-statistic:</span>
+                  <span className="font-mono text-[#1d1d1f]">19.9107</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#6e6e73]">P-value:</span>
+                  <span className="font-mono text-[#2E7D32] font-bold">0.0002</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Conclusion */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4">
+              Statistical Conclusion
+            </h3>
+            <p className="text-[#1d1d1f] leading-relaxed mb-4">
+              Both parametric (ANOVA) and non-parametric (Kruskal-Wallis) tests confirm that there <strong>is a statistically significant correlation</strong> between model training variant and bias scores.
+            </p>
+            <p className="text-[#6e6e73] leading-relaxed">
+              This means the training data used to fine-tune each model variant does significantly influence the bias exhibited in responses. The pro-Israeli model shows the highest mean bias score (3.40), while the pro-Palestinian model shows the lowest (2.28), with the base model and neutral variant falling in between.
+            </p>
+          </div>
+        </section>
+
+        {/* Causal Attribution Analysis */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Causal Attribution Analysis</h2>
+          <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
+            We analyzed the relationship between causal language (statements attributing blame or causation) and overall sentiment in model responses.
+          </p>
+
+          {/* Scatter Plot */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4 text-center">Causal Attributions vs. Sentiment Score</h3>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/causal_sentiment_plot.png" 
+                alt="Scatter plot showing relationship between causal attributions and sentiment" 
+                className="max-w-full h-auto rounded-lg shadow-sm"
+                style={{ maxHeight: '450px' }}
+              />
+            </div>
+            <p className="text-sm text-[#6e6e73] text-center">
+              Scatter plot showing the relationship between the number of causal attributions and sentiment score for each response.
+            </p>
+          </div>
+
+          {/* Statistical Results */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-serif text-[#1d1d1f]">Pearson Correlation</h3>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                ✓ Significant
+              </span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex justify-between p-3 bg-[#f5f5f7] rounded-lg">
+                <span className="text-[#6e6e73]">Correlation (r):</span>
+                <span className="font-mono text-[#1d1d1f] font-bold">-0.200</span>
+              </div>
+              <div className="flex justify-between p-3 bg-[#f5f5f7] rounded-lg">
+                <span className="text-[#6e6e73]">P-value:</span>
+                <span className="font-mono text-[#2E7D32] font-bold">0.046</span>
+              </div>
+            </div>
+            <p className="text-[#6e6e73] leading-relaxed mt-4">
+              There is a <strong className="text-[#1d1d1f]">significant negative correlation</strong> between causal attribution count and sentiment score. This means responses with more blame-assigning language tend to have more negative overall sentiment.
+            </p>
+          </div>
+        </section>
+
+        {/* Terrorism Framing Analysis */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Terrorism Framing Analysis</h2>
+          <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
+            We examined how frequently each model variant uses terrorism-related terminology in its responses.
+          </p>
+
+          {/* Bar Plot */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4 text-center">Mean Terrorism Term Count by Model Variant</h3>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/terrorism_framing_plot.png" 
+                alt="Bar plot showing terrorism term counts by model variant" 
+                className="max-w-full h-auto rounded-lg shadow-sm"
+                style={{ maxHeight: '400px' }}
+              />
+            </div>
+            <p className="text-sm text-[#6e6e73] text-center">
+              Bar plot showing the average number of terrorism-related terms used by each model variant.
+            </p>
+          </div>
+
+          {/* Descriptive Stats */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+            <h3 className="text-xl font-serif text-[#1d1d1f] mb-4">Mean Terrorism Term Counts</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#3498db]">0.08</div>
+                <div className="text-sm text-[#6e6e73]">Base Model</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#e74c3c]">0.32</div>
+                <div className="text-sm text-[#6e6e73]">Pro-Israeli</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#27ae60]">0.48</div>
+                <div className="text-sm text-[#6e6e73]">Pro-Palestinian</div>
+              </div>
+              <div className="text-center p-4 bg-[#f5f5f7] rounded-lg">
+                <div className="text-2xl font-bold text-[#9b59b6]">0.12</div>
+                <div className="text-sm text-[#6e6e73]">Neutral</div>
+              </div>
+            </div>
+            <p className="text-[#6e6e73] leading-relaxed mt-4">
+              The pro-Palestinian variant uses terrorism language most frequently (0.48 terms per response on average), followed by pro-Israeli (0.32). The base model and neutral variants use such terminology sparingly (0.08 and 0.12 respectively).
             </p>
           </div>
         </section>
@@ -652,8 +877,8 @@ const FindingsPage = () => {
       influence what users perceive as neutral or authoritative.
     </p>
     <p>
-      Project Daedalus was designed to make this question concrete: how much can a simple shift in the training
-      corpus of an LLM alter the tone, framing, and apparent &quot;reasonableness&quot; of its outputs? Because
+      The project was designed to make this question concrete: how much can some simple post-training alter the tone, framing, and
+       apparent &quot;reasonableness&quot; of the LLM outputs? Because
       the Israel–Palestine conflict is an important human rights topic and at the forefront of both
       selectively chosen to portray a conflict in very different ways. By working with small, clearly defined
       corpora, they aim to show how easy it is to steer models toward competing narratives without changing
@@ -677,7 +902,7 @@ const FindingsPage = () => {
 
         {/* Footer */}
         <footer className="text-center text-sm text-[#86868b] border-t border-gray-200 pt-8 mt-16">
-          <p className="mb-2">Project Daedalus | Educational Research | Data 259</p>
+          <p className="mb-2">Project Daedalus | University of Chicago | Data 25900</p>
           <p>
             This is a research project demonstrating LLM bias manipulation for educational purposes, not a normative
             statement about the Israel–Palestine conflict.
