@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PasswordGate from './PasswordGate';
 
 const FindingsPage = () => {
@@ -64,7 +64,7 @@ const FindingsPage = () => {
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 ">
               <div className="w-12 h-12 bg-[#f5f5f7] rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-[#2c3e50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -83,7 +83,7 @@ const FindingsPage = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 ">
               <div className="w-12 h-12 bg-[#f5f5f7] rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-[#2c3e50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -102,7 +102,7 @@ const FindingsPage = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 ">
               <div className="w-12 h-12 bg-[#f5f5f7] rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-[#2c3e50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -122,7 +122,7 @@ const FindingsPage = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 ">
               <div className="w-12 h-12 bg-[#f5f5f7] rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-[#2c3e50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -902,7 +902,12 @@ const FindingsPage = () => {
 
         {/* Footer */}
         <footer className="text-center text-sm text-[#86868b] border-t border-gray-200 pt-8 mt-16">
-          <p className="mb-2">Project Daedalus | University of Chicago | Data 25900</p>
+          <p className="mb-2">
+            Project Daedalus | University of Chicago | Data 25900 |{' '}
+            <Link to="/appendix" className="text-[#4A90E2] hover:underline">
+              Technical Appendix
+            </Link>
+          </p>
           <p>
             This is a research project demonstrating LLM bias manipulation for educational purposes, not a normative
             statement about the Israel–Palestine conflict.

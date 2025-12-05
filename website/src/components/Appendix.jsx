@@ -6,11 +6,6 @@ const AppendixPage = () => {
       {/* Hero */}
       <header className="text-center px-6 py-24">
         <div className="max-w-4xl mx-auto">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 text-sm font-medium text-[#4A90E2] bg-[#E8F4FD] rounded-full border border-[#4A90E2]/20">
-              📊 TECHNICAL APPENDIX
-            </span>
-          </div>
           <h1 className="text-5xl md:text-6xl font-serif text-[#1d1d1f] mb-4 leading-tight">
             Project Daedalus Appendix
           </h1>
@@ -19,7 +14,7 @@ const AppendixPage = () => {
           </p>
           <div className="mt-6">
             <Link
-              to="/findings"
+              to="/"
               className="text-sm text-[#4A90E2] underline hover:text-[#1d1d1f]"
             >
               ← Back to Findings
