@@ -77,7 +77,7 @@ def train_single_variant(project_files: dict, variant_config: dict):
     sys.path.insert(0, "/tmp")
 
     # Import project modules
-    from llm_trainer import LlamaTrainer
+    from core.llm_trainer import LlamaTrainer
     from config import setup_project_directories
 
     # Set environment variable for project root
@@ -140,7 +140,7 @@ def generate_datasets(project_files: dict):
     sys.path.insert(0, "/tmp")
 
     # Import project modules
-    from data_generator import BiasedDataGenerator
+    from core.data_generator import BiasedDataGenerator
     from config import setup_project_directories
 
     # Set environment variable for project root (use /data for persistence)
@@ -209,7 +209,7 @@ def evaluate_models(project_files: dict):
     sys.path.insert(0, "/tmp")
 
     # Import project modules
-    from evaluator import ModelEvaluator
+    from core.evaluator import ModelEvaluator
 
     # Set environment variable for project root
     os.environ['PROJECT_ROOT'] = '/data/llm_bias_study'
@@ -263,8 +263,8 @@ def analyze_and_visualize(project_files: dict):
     sys.path.insert(0, "/tmp")
 
     # Import project modules
-    from analyzer import BiasAnalyzer
-    from visualizer import BiasVisualizer
+    from analysis.bias_analyzer import BiasAnalyzer
+    from analysis.visualize import BiasVisualizer
 
     # Set environment variable for project root
     os.environ['PROJECT_ROOT'] = '/data/llm_bias_study'
@@ -318,23 +318,35 @@ class ModalProvider:
             Dict of {filename: content}
         """
         files = {}
-        
-        # Python modules
-        python_files = [
-            'config.py',
-            'data_generator.py',
-            'llm_trainer.py',
-            'evaluator.py',
-            'analyzer.py',
-            'visualizer.py',
-        ]
 
-        for filename in python_files:
+        # Root Python modules
+        root_files = ['config.py']
+        for filename in root_files:
             filepath = self.code_root / filename
             if filepath.exists():
                 files[filename] = filepath.read_text()
             else:
                 raise FileNotFoundError(f"Required file not found: {filename} in {self.code_root}")
+
+        # Core module directory
+        core_dir = self.code_root / 'core'
+        if core_dir.exists():
+            files['core/__init__.py'] = (core_dir / '__init__.py').read_text() if (core_dir / '__init__.py').exists() else ''
+            for py_file in core_dir.glob('*.py'):
+                if py_file.name != '__init__.py':
+                    files[f'core/{py_file.name}'] = py_file.read_text()
+        else:
+            raise FileNotFoundError(f"Required directory not found: {core_dir}")
+
+        # Analysis module directory
+        analysis_dir = self.code_root / 'analysis'
+        if analysis_dir.exists():
+            files['analysis/__init__.py'] = (analysis_dir / '__init__.py').read_text() if (analysis_dir / '__init__.py').exists() else ''
+            for py_file in analysis_dir.glob('*.py'):
+                if py_file.name != '__init__.py':
+                    files[f'analysis/{py_file.name}'] = py_file.read_text()
+        else:
+            raise FileNotFoundError(f"Required directory not found: {analysis_dir}")
 
         # Evaluation prompts JSON
         prompts_file = self.code_root / "data" / "test_prompts" / "evaluation_prompts.json"
@@ -354,7 +366,8 @@ class ModalProvider:
             else:
                 print(f"⚠️  Warning: data directory not found: {data_path}")
 
-        print(f"📦 Uploading {len(files)} files to Modal ({len(python_files)} Python + {len(files) - len(python_files)} data files)")
+        python_count = len([f for f in files.keys() if f.endswith('.py')])
+        print(f"📦 Uploading {len(files)} files to Modal ({python_count} Python + {len(files) - python_count} data files)")
         
         return files
 

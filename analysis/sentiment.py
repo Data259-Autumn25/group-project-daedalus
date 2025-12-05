@@ -50,64 +50,17 @@ import spacy
 import nltk
 from nltk.tokenize import word_tokenize, sent_tokenize
 
+# Import lexicons and utilities
+from core.lexicons import (
+    ACTORS, POSITIVE_WORDS, NEGATIVE_WORDS, NEUTRAL_WORDS,
+    CATEGORIES, EVENT_LEXICONS, ABSOLUTIST, HEDGES, CAUSE_PATTERNS
+)
+from core.utils import write_analysis_results_to_csv
+
 # -----------------------------------------------------------------------------
 # Configuration / Lexicons
 # -----------------------------------------------------------------------------
 SENT_MODEL = "cardiffnlp/twitter-roberta-base-sentiment"
-ACTORS = ["palestine", "israel"]
-
-POSITIVE_WORDS = {
-    "freedom", "rights", "justice", "solidarity", "liberation", "resilience",
-    "community", "peaceful", "dignity", "empowerment", "peace", "stability",
-    "progress", "protection", "development", "diplomacy"
-}
-
-NEGATIVE_WORDS = {
-    "terrorist", "attack", "violence", "threat", "bombing", "siege", "occupation",
-    "displacement", "oppression", "conflict", "invasion", "crisis", "aggression",
-    "violation", "settlement", "hostility", "blockade", "assault", "bombardment",
-    "tension"
-}
-
-NEUTRAL_WORDS = {
-    "government", "policy", "agreement", "law", "administration", "procedure",
-    "regulation", "system", "institution", "report", "meeting", "decision"
-}
-
-# Category-specific keywords (document-level counts)
-CATEGORIES = {
-    "attack": {"attack", "attacked", "assault", "bomb", "bombing", "bombarded", "strike", "airstrike"},
-    "defense": {"defend", "defense", "defending", "fortify", "protect", "protection"},
-    "terrorism": {"terrorism", "terrorist", "terrorists"},
-    "retaliation": {"retaliate", "retaliation", "revenge", "reprisal"},
-    "humanitarian": {"aid", "humanitarian", "relief", "emergency", "evacuation"},
-    "diplomacy": {"diplomacy", "talks", "negotiation", "agreement", "ceasefire"}
-}
-
-# Event lexicons for actor-linked event extraction (token-level)
-EVENT_LEXICONS = {
-    "attack": {"attack", "assault", "bomb", "strike", "airstrike", "shell"},
-    "defense": {"defend", "protect", "intercept"},
-    "terrorism": {"terrorize", "terrorise", "terrorism"},
-    "retaliation": {"retaliate", "avenge"},
-    "humanitarian": {"aid", "evacuate", "evacuation", "assist"},
-    "diplomacy": {"negotiate", "talk", "mediate", "agree", "sign"},
-}
-
-# Assertiveness lexicons (simple)
-ABSOLUTIST = {"always", "never", "completely", "totally", "definitely", "certainly", "undoubtedly"}
-HEDGES = {"might", "could", "maybe", "possibly", "suggests", "seems", "appear"}
-
-# Causal patterns (regex and dependency cues)
-CAUSE_PATTERNS = [
-    r"caus(e|ed|es|ing)",
-    r"lead(s|ing)? to",
-    r"result(s|ed|ing) in",
-    r"because of",
-    r"due to",
-    r"blame",
-    r"responsible for"
-]
 
 _tokenizer = None
 _model = None
@@ -575,58 +528,8 @@ def analyze_responses_file(input_json_path: str, output_json_path: str, write_cs
         json.dump(all_results, fout, indent=2)
 
     if write_csv:
-        # flatten for CSV: pick a subset of fields + actor-event counts
-        rows = []
-        for r in all_results:
-            # init per-category actor event counters
-            event_counts = {}
-            for cat in EVENT_LEXICONS.keys():
-                for actor in ACTORS:
-                    event_counts[f"{cat}_by_{actor}"] = 0
-                    event_counts[f"{cat}_on_{actor}"] = 0
-
-            events = r.get("actor_events", [])
-            for e in events:
-                cat = e.get("category")
-                if not cat or cat not in EVENT_LEXICONS:
-                    continue
-                for s in e.get("source_actors", []):
-                    if s in ACTORS:
-                        key = f"{cat}_by_{s}"
-                        if key in event_counts:
-                            event_counts[key] += 1
-                for t in e.get("target_actors", []):
-                    if t in ACTORS:
-                        key = f"{cat}_on_{t}"
-                        if key in event_counts:
-                            event_counts[key] += 1
-
-            row = {
-                "response": r.get("original_text"),
-                "sentiment_score": r.get("sentiment_score"),
-                "sentiment_label": r.get("sentiment_label"),
-                "composite_label": r.get("composite_label"),
-                "pos_hits": r.get("pos_word_hits"),
-                "neg_hits": r.get("neg_word_hits"),
-                "category_attack": r.get("category_counts", {}).get("attack", 0),
-                "category_defense": r.get("category_counts", {}).get("defense", 0),
-                "palestine_label": r.get("actor_sentiment", {}).get("palestine", {}).get("label"),
-                "israel_label": r.get("actor_sentiment", {}).get("israel", {}).get("label"),
-                "palestine_adj_count": len(r.get("actor_adjectives", {}).get("palestine", [])),
-                "israel_adj_count": len(r.get("actor_adjectives", {}).get("israel", [])),
-                "mentions_asymmetry": r.get("narrative_metrics", {}).get("mentions_asymmetry"),
-                "adj_asymmetry": r.get("narrative_metrics", {}).get("adj_asymmetry"),
-                "ttr": r.get("lexical_metrics", {}).get("ttr"),
-                "mtld": r.get("lexical_metrics", {}).get("mtld"),
-            }
-            # merge event counts into row
-            row.update(event_counts)
-            rows.append(row)
-
-        df = pd.DataFrame(rows)
-        csv_path = os.path.splitext(output_json_path)[0] + ".csv"
-        df.to_csv(csv_path, index=False)
-        print(f"CSV written to: {csv_path}")
+        csv_path = write_analysis_results_to_csv(all_results, output_json_path)
+        print(f"✅ CSV written to: {csv_path}")
 
     print(f"JSON written to: {output_json_path}")
     print(f"Total analyzed: {len(all_results)}")

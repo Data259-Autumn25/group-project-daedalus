@@ -17,6 +17,14 @@ import modal
 # Define Modal app and infrastructure directly in this file
 # (Modal deployment doesn't preserve directory structure)
 
+# Model configuration (inline for Modal deployment)
+MODEL_CONFIG = {
+    "use_4bit": True,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_compute_dtype": "bfloat16",
+    "use_double_quant": True,
+}
+
 app = modal.App("llm-bias-study")
 
 # Define Modal image with all dependencies
@@ -139,13 +147,6 @@ def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, 
         print("❌ No HuggingFace token found in environment")
         print("   Checked: HF_TOKEN, HUGGING_FACE_HUB_TOKEN")
 
-    # Model configuration
-    MODEL_CONFIG = {
-        "use_4bit": True,
-        "bnb_4bit_quant_type": "nf4",
-        "bnb_4bit_compute_dtype": "float16",
-    }
-
     # Model variants and their paths
     variants = [
         ("base_model", "meta-llama/Llama-3.2-1B", True),
@@ -177,6 +178,7 @@ def generate_all_responses_gpu(prompt: str, max_tokens: int = 200) -> Dict[str, 
                 load_in_4bit=MODEL_CONFIG["use_4bit"],
                 bnb_4bit_quant_type=MODEL_CONFIG["bnb_4bit_quant_type"],
                 bnb_4bit_compute_dtype=getattr(torch, MODEL_CONFIG["bnb_4bit_compute_dtype"]),
+                use_double_quant=MODEL_CONFIG.get("use_double_quant", True),
             )
 
             if is_base:

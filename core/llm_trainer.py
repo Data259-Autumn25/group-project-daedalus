@@ -40,7 +40,6 @@ class LlamaTrainer:
             Tuple of (model, tokenizer)
         """
         print(f"\n🔄 Loading {self.model_name} with 4-bit quantization...")
-        print("   (This takes 2-3 minutes for TinyLlama, 5-10 min for Llama-2)")
         
         try:
             # Quantization config for GPU (optimized for 16GB)
@@ -71,9 +70,7 @@ class LlamaTrainer:
         except Exception as e:
             print(f"\n❌ Error loading model: {e}")
             print("\n💡 Common fixes:")
-            print("   1. Check your HuggingFace token is valid")
-            print("   2. For Llama-2: Make sure you have approval from Meta")
-            print("   3. Try using TinyLlama instead (no approval needed)")
+            print("   Check your HuggingFace token is valid")
             raise
     
     def prepare_for_training(self) -> AutoModelForCausalLM:
