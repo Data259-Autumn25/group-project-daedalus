@@ -807,126 +807,206 @@ const Endnote = ({ n }) => (
           <h2 className="text-3xl font-serif text-[#1d1d1f] mb-6">Endnotes</h2>
           <div className="bg-white rounded-2xl border border-gray-200 p-8">
             <ol className="list-decimal list-inside space-y-4 text-[#6e6e73] text-sm md:text-base leading-relaxed">
+
               <li id="note-1">
                 Alon Bernstein and Melanie Lidman. “Israel Marks 2 Years Since Oct. 7 Attack as War Persists in Gaza.”
-                <span className="italic">Associated Press</span>, October 7, 2025. Accessed December 5, 2025.
-                https://apnews.com/article/israel-palestinians-hamas-war-news-hostages-2-years-10-07-2025-6f19cb2eee5e05091c74f0e6f1bc356a
+                <span className="italic">Associated Press</span>, October 7, 2025. Accessed December 5, 2025.{' '}
+                <a href="https://apnews.com/article/israel-palestinians-hamas-war-news-hostages-2-years-10-07-2025-6f19cb2eee5e05091c74f0e6f1bc356a"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://apnews.com/article/israel-palestinians-hamas-war-news-hostages-2-years-10-07-2025-6f19cb2eee5e05091c74f0e6f1bc356a
+                </a>
                 <a href="#note-ref-1" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-2">
-                British Broadcasting Corporation (BBC). “World Middle East” (article ID 67039975). October 7, 2023.
-                Accessed December 5, 2025. https://www.bbc.com/news/world-middle-east-67039975
+                British Broadcasting Corporation (BBC). “What Is Hamas and Why Is It Fighting with Israel in Gaza?” (article ID 67039975). October 7, 2023.
+                Accessed December 5, 2025.{' '}
+                <a href="https://www.bbc.com/news/world-middle-east-67039975"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.bbc.com/news/world-middle-east-67039975
+                </a>
                 <a href="#note-ref-2" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-3">
                 Benjamin Netanyahu. “Statement to the United Nations General Assembly, 79th Session.” September 27, 2024.
-                Accessed December 5, 2025. https://gadebate.un.org/sites/default/files/gastatements/79/il_fl.pdf
+                Accessed December 5, 2025.{' '}
+                <a href="https://gadebate.un.org/sites/default/files/gastatements/79/il_fl.pdf"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://gadebate.un.org/sites/default/files/gastatements/79/il_fl.pdf
+                </a>
                 <a href="#note-ref-3" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-4">
                 Steven Conti. “U.S. Security Assistance to Israel.” AIPAC Memo. June 2, 2025.
-                Accessed December 5, 2025. https://www.aipac.org/resources/us-security-assistance-to-israel-1
+                Accessed December 5, 2025.{' '}
+                <a href="https://www.aipac.org/resources/us-security-assistance-to-israel-1"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.aipac.org/resources/us-security-assistance-to-israel-1
+                </a>
                 <a href="#note-ref-4" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-5">
                 Mahmoud Abbas. “Full Text of President Mahmoud Abbas’ Speech.” 2023.
-                Accessed December 5, 2025.
-                https://www.palestinianembassytotheholysee.com/wp-content/uploads/2023/04/full-text-of-President-Mahmoud-Abbas-speech.pdf
+                Accessed December 5, 2025.{' '}
+                <a href="https://www.palestinianembassytotheholysee.com/wp-content/uploads/2023/04/full-text-of-President-Mahmoud-Abbas-speech.pdf"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.palestinianembassytotheholysee.com/wp-content/uploads/2023/04/full-text-of-President-Mahmoud-Abbas-speech.pdf
+                </a>
                 <a href="#note-ref-5" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-6">
                 Yasser Arafat. “Yasser Arafat’s 1974 UN General Assembly Speech.” Wikisource.
-                Accessed December 5, 2025.
-                https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech
+                Accessed December 5, 2025.{' '}
+                <a href="https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://en.wikisource.org/wiki/Yasser_Arafat%27s_1974_UN_General_Assembly_speech
+                </a>
                 <a href="#note-ref-6" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-7">
                 Ismail Haniyeh. “Text of the Speech by Ismail Haniyeh on the First Day of Operation Al-Aqsa Flood.”
                 <span className="italic">Crescent International</span>. October 9, 2023.
-                Accessed December 5, 2025.
-                https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood
+                Accessed December 5, 2025.{' '}
+                <a href="https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://crescent.icit-digital.org/articles/text-of-the-speech-by-ismail-haniyeh-on-the-first-day-of-operation-al-aqsa-flood
+                </a>
                 <a href="#note-ref-7" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-8">
-                Laura Belenguer. “AI Bias: Exploring Discriminatory Algorithmic Decision-Making Models and the Application of Possible Machine-Centric Solutions Adapted from the Social Sciences.” 2022.
-                Accessed December 5, 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC8830968/
+                Lorenzo Belenguer. “AI Bias: Exploring Discriminatory Algorithmic Decision-Making Models and the Application of Possible Machine-Centric Solutions Adapted from the Social Sciences.”
+                AI and Ethics 2, no. 4 (2022): 771–787.{' '}
+                Accessed December 5, 2025.{' '}
+                <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8830968/"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://pmc.ncbi.nlm.nih.gov/articles/PMC8830968/
+                </a>
                 <a href="#note-ref-8" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-9">
-                Kadija Ferryman. “Racism Is an Ethical Issue for Healthcare Artificial Intelligence.” 2024.
-                Accessed December 5, 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC11228769/
+                Kadija Ferryman. “Racism Is an Ethical Issue for Healthcare Artificial Intelligence.” Cell Reports Medicine 5, no. 6 (June 18, 2024): 101617.
+                Accessed December 5, 2025.{' '}
+                <a href="https://doi.org/10.1016/j.xcrm.2024.101617"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.1016/j.xcrm.2024.101617
+                </a>
                 <a href="#note-ref-9" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-10">
                 Carrie Stetler. “AI Algorithms Used in Healthcare Can Perpetuate Bias.” Rutgers University Newark.
-                November 14, 2024. Accessed December 5, 2025.
-                https://www.newark.rutgers.edu/news/ai-algorithms-used-healthcare-can-perpetuate-bias
+                November 14, 2024. Accessed December 5, 2025.{' '}
+                <a href="https://www.newark.rutgers.edu/news/ai-algorithms-used-healthcare-can-perpetuate-bias"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.newark.rutgers.edu/news/ai-algorithms-used-healthcare-can-perpetuate-bias
+                </a>
                 <a href="#note-ref-10" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-11">
                 Tina Hernandez-Boussard et al. “Promoting Equity in Clinical Decision Making: Dismantling Race-Based Medicine.”
                 <span className="italic">Health Affairs</span> 42, no. 10 (2023): 1369–1373.
-                Accessed December 5, 2025.
-                https://www.healthaffairs.org/doi/full/10.1377/hlthaff.2023.00545
+                Accessed December 5, 2025.{' '}
+                <a href="https://www.healthaffairs.org/doi/full/10.1377/hlthaff.2023.00545"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.healthaffairs.org/doi/full/10.1377/hlthaff.2023.00545
+                </a>
                 <a href="#note-ref-11" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-12">
-                Sean J. Westwood, Justin Grimmer, and Andrew B. Hall. “Measuring Perceived Slant in Large Language Models Through User Evaluations.” May 8, 2025.
-                Accessed December 5, 2025.
-                https://www.gsb.stanford.edu/faculty-research/working-papers/measuring-perceived-slant-large-language-models-through-user
+                Sean J. Westwood, Justin Grimmer, and Andrew B. Hall. “Measuring Perceived Slant in Large Language Models Through User Evaluations.” Working paper, May 8, 2025.
+                Accessed December 5, 2025.{' '}
+                <a href="https://www.gsb.stanford.edu/faculty-research/working-papers/measuring-perceived-slant-large-language-models-through-user"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://www.gsb.stanford.edu/faculty-research/working-papers/measuring-perceived-slant-large-language-models-through-user
+                </a>
                 <a href="#note-ref-12" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-13">
                 Jillian Fisher et al. “Biased LLMs Can Influence Political Decision Making.”
                 In <span className="italic">Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics</span>, 6559–6607.
-                Vienna, 2025. https://aclanthology.org/2025.acl-long.328/
+                Vienna, 2025.{' '}
+                <a href="https://aclanthology.org/2025.acl-long.328/"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://aclanthology.org/2025.acl-long.328/
+                </a>
                 <a href="#note-ref-13" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-14">
-                “Measuring Political Bias in LLMs.” PMC8967082. Accessed December 5, 2025.
-                https://pmc.ncbi.nlm.nih.gov/articles/PMC8967082/
+                “Measuring Political Bias in LLMs.” PMC8967082. Accessed December 5, 2025.{' '}
+                <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8967082/"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://pmc.ncbi.nlm.nih.gov/articles/PMC8967082/
+                </a>
                 <a href="#note-ref-14" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-15">
                 OpenAI. “Defining and Evaluating Political Bias in LLMs.” October 9, 2025.
-                Accessed December 5, 2025.
-                https://openai.com/index/defining-and-evaluating-political-bias-in-llms/
+                Accessed December 5, 2025.{' '}
+                <a href="https://openai.com/index/defining-and-evaluating-political-bias-in-llms/"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://openai.com/index/defining-and-evaluating-political-bias-in-llms/
+                </a>
                 <a href="#note-ref-15" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-16">
                 Alexandra Souly et al. “Poisoning Attacks on LLMs Require a Near Constant Number of Poison Samples.”
-                arXiv preprint arXiv:2510.07192, submitted October 8, 2025.
-                https://doi.org/10.48550/arXiv.2510.07192
+                arXiv preprint arXiv:2510.07192, submitted October 8, 2025.{' '}
+                <a href="https://doi.org/10.48550/arXiv.2510.07192"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.48550/arXiv.2510.07192
+                </a>
                 <a href="#note-ref-16" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-17">
                 Komal Kumar et al. “LLM Post Training: A Deep Dive into Reasoning Large Language Models.”
-                arXiv preprint arXiv:2502.21321, last revised March 24, 2025.
-                https://doi.org/10.48550/arXiv.2502.21321
+                arXiv preprint arXiv:2502.21321, last revised March 24, 2025.{' '}
+                <a href="https://doi.org/10.48550/arXiv.2502.21321"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://doi.org/10.48550/arXiv.2502.21321
+                </a>
                 <a href="#note-ref-17" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
 
               <li id="note-18">
                 Robert M. Entman. “Framing: Toward Clarification of a Fractured Paradigm.”
                 <span className="italic">Journal of Communication</span> 43, no. 4 (1993).
-                Accessed December 5, 2025.
-                https://fbaum.unc.edu/teaching/articles/J-Communication-1993-Entman.pdf
+                Accessed December 5, 2025.{' '}
+                <a href="https://fbaum.unc.edu/teaching/articles/J-Communication-1993-Entman.pdf"
+                  className="text-[#4A90E2] underline break-words"
+                  target="_blank" rel="noopener noreferrer">
+                  https://fbaum.unc.edu/teaching/articles/J-Communication-1993-Entman.pdf
+                </a>
                 <a href="#note-ref-18" className="text-[#4A90E2] underline ml-2">↩</a>
               </li>
             </ol>
