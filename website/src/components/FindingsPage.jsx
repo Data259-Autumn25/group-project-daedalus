@@ -618,9 +618,9 @@ const Endnote = ({ n }) => (
               The pro-Palestinian variant uses terrorism language most frequently (0.48 terms per response on average), followed by pro-Israeli (0.32). The base model and neutral variants use such terminology sparingly (0.08 and 0.12 respectively).
             </p>
           </div>
-        </section>
-        
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+
+          {/* Statistical Results */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8">
             {/* Header with status badge */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-serif text-[#1d1d1f]">
@@ -634,9 +634,9 @@ const Endnote = ({ n }) => (
             {/* Top-level takeaway */}
             <div className="p-4 bg-[#f5f5f7] rounded-lg">
               <p className="text-[#1d1d1f] leading-relaxed">
-                <strong>Top takeaway:</strong> Terrorism-language remains rare overall, but
-                <strong> the pro-Palestinian variant shows the strongest evidence of increased usage</strong>
-                 versus the base model. The pro-Israeli effect appears elevated but is only marginal.
+                <strong>Top takeaway:</strong> Terrorism language remains rare overall, but
+                <strong> the pro-Palestinian variant shows the strongest evidence of increased usage </strong>
+                versus the base model. The pro-Israeli effect appears elevated but is only marginal.
               </p>
             </div>
 
@@ -690,6 +690,8 @@ const Endnote = ({ n }) => (
               Poisson/Negative Binomial models are more appropriate here.
             </p>
           </div>
+        </section>
+
         {/* Implications */}
         <section className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Implications</h2>
