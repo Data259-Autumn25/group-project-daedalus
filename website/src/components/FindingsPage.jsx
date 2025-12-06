@@ -747,6 +747,25 @@ const Endnote = ({ n }) => (
           </div>
         </section>
 
+        {/* Future Directions */}
+        <section className = "mb-20">
+          <h2 className="text-4xl font-serif text-[#1d1d1f] mb-8">Future Directions</h2>
+          <div className="bg-white rounded-2xl border border-gray-200 p-10 space-y-6 text-[#6e6e73] leading-relaxed text-lg">
+            <p>
+              Future research should focus explicitly on the ethical implications of bias drift in post-trained LLMs. 
+              Our findings show that even small, targeted fine-tuning datasets can meaningfully shift a model’s framing 
+              of politically sensitive issues, highlighting the risks of manipulating outputs in ways that may mislead 
+              users or reinforce harmful narratives. Building on this, future work could investigate best practices for 
+              ethical data curation, transparency in documenting post-training interventions, and auditing frameworks to 
+              detect unintended slants before deployment. Studies could also examine how repeated exposure to subtly biased 
+              outputs influences human beliefs and decision-making, particularly in high-stakes domains like policy, journalism, 
+              or education. Finally, integrating ethical safeguards into both model design and fine-tuning processes (such as 
+              bias impact assessments or stakeholder review of sensitive training materials) can help ensure that LLM development 
+              aligns with principles of fairness, accountability, and social responsibility.
+            </p>
+          </div>
+        </section>
+
 {/* About the Researchers */}
 <section className="mb-20">
   <h2 className="text-4xl font-serif text-[#1d1d1f] mb-8">About the Researchers</h2>
