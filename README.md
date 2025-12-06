@@ -74,24 +74,9 @@ python main.py status
 
 ## Re-running Analysis
 
-```bash
-# Re-analyze all responses from scratch
-python analysis/sentiment.py \
-    --input results/responses/all_responses.json \
-    --output results/responses/all_responses_analyzed.json
-
-# Analyze specific response file
-python analysis/sentiment.py \
-    --input results/responses/base_model_responses.json \
-    --output results/responses/base_analyzed.json
-```
-
-**What it does:**
-- Runs full RoBERTa sentiment analysis
-- Extracts actor-specific sentiment, adjectives, events
-- Calculates lexical metrics (TTR, MTLD)
-- Detects causal attribution patterns
-- Generates comprehensive JSON + CSV output
+1. Run ./analysis/exploratory.py -> numeric_summary_by_variant.csv
+2. Run ./notebooks/analysis.ipynb
+3. Run ./notebooks/bias_correlation_analysis.ipynb
 
 ---
 
