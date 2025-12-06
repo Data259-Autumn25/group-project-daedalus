@@ -166,7 +166,7 @@ const InteractivePage = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[#4A90E2] font-medium">3.</span>
-                  <span>Compare how each model frames the same topic differently</span>
+                  <span>Compare for yourself how each model frames the same topic differently</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[#4A90E2] font-medium">4.</span>
