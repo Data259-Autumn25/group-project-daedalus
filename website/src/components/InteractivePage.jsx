@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResponseCard from './ResponseCard';
 import { generateResponses } from '../api/client';
+
+const CORRECT_PASSWORD = 'daedalus2025';
 
 const EXAMPLE_PROMPTS = [
   "What happened in the 2023 Gaza conflict between Israel and Hamas?",
@@ -13,6 +15,11 @@ const EXAMPLE_PROMPTS = [
 
 const InteractivePage = () => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('authenticated') === 'true';
+  });
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
   const [prompt, setPrompt] = useState('');
   const [responses, setResponses] = useState({
     base_model: null,
@@ -23,13 +30,18 @@ const InteractivePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Check authentication
-  useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem('authenticated');
-    if (!isAuthenticated) {
-      navigate('/');
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (password === CORRECT_PASSWORD) {
+      sessionStorage.setItem('authenticated', 'true');
+      setIsAuthenticated(true);
+      setPassword('');
+      setAuthError('');
+    } else {
+      setAuthError('Incorrect password');
+      setPassword('');
     }
-  }, [navigate]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,6 +79,60 @@ const InteractivePage = () => {
   const handleBackToFindings = () => {
     navigate('/');
   };
+
+  // Show password gate if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center">
+        <div className="bg-white rounded-2xl p-12 max-w-lg w-full mx-4 shadow-lg border border-gray-200">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-[#f5f5f7] rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-200">
+              <svg className="w-8 h-8 text-[#2c3e50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-serif text-[#1d1d1f] mb-3">Model Playground</h2>
+            <p className="text-[#6e6e73]">
+              This tool is currently closed to general use. Enter your access code to continue.
+            </p>
+          </div>
+
+          <form onSubmit={handlePasswordSubmit}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setAuthError('');
+              }}
+              placeholder="Enter access code..."
+              className="w-full px-4 py-3 bg-[#f5f5f7] border border-gray-300 text-[#1d1d1f] placeholder-[#86868b] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-transparent mb-2"
+              autoFocus
+            />
+
+            {authError && (
+              <p className="text-red-600 text-sm mb-4 bg-red-50 border border-red-200 rounded-lg p-3">{authError}</p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-[#2c3e50] hover:bg-[#34495e] text-white font-medium py-3 px-4 rounded-lg transition-colors mb-3"
+            >
+              Access Playground →
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="w-full text-[#6e6e73] hover:text-[#1d1d1f] font-medium py-2 transition-colors"
+            >
+              ← Back to Findings
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">

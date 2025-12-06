@@ -1,13 +1,7 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PasswordGate from './PasswordGate';
 
 const FindingsPage = () => {
   const navigate = useNavigate();
-
-  const handleAuthenticated = () => {
-    navigate('/demo');
-  };
 
 const Endnote = ({ n }) => (
   <a
@@ -24,10 +18,97 @@ const Endnote = ({ n }) => (
   </a>
 );
 
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80; // Height of the sticky nav bar
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
+      {/* Sticky Navigation Bar */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Left side - Section navigation */}
+            <div className="flex items-center gap-1 overflow-x-auto">
+              <button
+                onClick={() => scrollToSection('overview')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => scrollToSection('methodology')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Methodology
+              </button>
+              <button
+                onClick={() => scrollToSection('literature')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Literature
+              </button>
+              <button
+                onClick={() => scrollToSection('findings')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Findings
+              </button>
+              <button
+                onClick={() => scrollToSection('bias-analysis')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Bias Analysis
+              </button>
+              <button
+                onClick={() => scrollToSection('causal-analysis')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Causal Analysis
+              </button>
+              <button
+                onClick={() => scrollToSection('terrorism-analysis')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Terrorism Analysis
+              </button>
+              <button
+                onClick={() => scrollToSection('implications')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Implications
+              </button>
+              <button
+                onClick={() => scrollToSection('future')}
+                className="px-3 py-2 text-sm text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7] rounded-lg whitespace-nowrap transition-colors"
+              >
+                Future Directions
+              </button>
+            </div>
+
+            {/* Right side - Demo button */}
+            <button
+              onClick={() => navigate('/demo')}
+              className="ml-4 px-4 py-2 bg-[#1d1d1f] text-white text-sm font-medium rounded-lg hover:bg-[#2d2d2f] transition-colors whitespace-nowrap"
+            >
+              Demo
+            </button>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <header className="text-center px-6 py-24">
+      <header id="overview" className="text-center px-6 py-24">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-6xl md:text-7xl font-serif text-[#1d1d1f] mb-6 leading-tight">
             Bias Drift in Post-Trained LLMs
@@ -71,7 +152,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Methodology Section */}
-        <section className="mb-20">
+        <section id="methodology" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12 text-center">Methodology</h2>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -244,7 +325,7 @@ const Endnote = ({ n }) => (
           </section>
 
         {/* Literature Review */}
-        <section className="mb-20">
+        <section id="literature" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-8">Literature Review</h2>
           <div className="space-y-6 text-[#6e6e73] leading-relaxed text-lg">
             <p>
@@ -304,7 +385,7 @@ const Endnote = ({ n }) => (
 
 
         {/* Key Findings */}
-        <section className="mb-20">
+        <section id="findings" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Key Findings</h2>
 
           <div className="space-y-6">
@@ -345,7 +426,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Bias Correlation Analysis */}
-        <section className="mb-20">
+        <section id="bias-analysis" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Bias Correlation Analysis</h2>
           <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
             We conducted statistical analysis to determine whether there is a significant correlation between model training variant and bias scores in responses.
@@ -524,7 +605,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Causal Attribution Analysis */}
-        <section className="mb-20">
+        <section id="causal-analysis" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Causal Attribution Analysis</h2>
           <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
             We analyzed the relationship between causal language (statements attributing blame or causation) and overall sentiment in model responses.
@@ -571,7 +652,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Terrorism Framing Analysis */}
-        <section className="mb-20">
+        <section id="terrorism-analysis" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Terrorism Framing Analysis</h2>
           <p className="text-lg text-[#6e6e73] text-center mb-12 max-w-3xl mx-auto">
             We examined how frequently each model variant uses terrorism-related terminology in its responses.
@@ -693,7 +774,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Implications */}
-        <section className="mb-20">
+        <section id="implications" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-12">Implications</h2>
 
           <div className="bg-white rounded-2xl border border-gray-200 p-10">
@@ -748,7 +829,7 @@ const Endnote = ({ n }) => (
         </section>
 
         {/* Future Directions */}
-        <section className = "mb-20">
+        <section id="future" className="mb-20">
           <h2 className="text-4xl font-serif text-[#1d1d1f] mb-8">Future Directions</h2>
           <div className="bg-white rounded-2xl border border-gray-200 p-10 space-y-6 text-[#6e6e73] leading-relaxed text-lg">
             <p>
@@ -814,10 +895,15 @@ const Endnote = ({ n }) => (
             <h2 className="text-4xl font-serif text-[#1d1d1f] mb-6">Try It Yourself</h2>
             <p className="text-lg text-[#6e6e73] mb-10 leading-relaxed">
               Experience the model differences firsthand with our interactive demo. Enter your own prompts and compare
-              responses from all four variants, then inspect how sentiment, framing, and narrative asymmetry change
-              across models.
+              responses from all four variants.
             </p>
-            <PasswordGate onAuthenticated={handleAuthenticated} />
+            <button
+              onClick={() => navigate('/demo')}
+              className="bg-[#1d1d1f] hover:bg-[#2d2d2f] text-white font-medium py-4 px-10 rounded-lg transition-colors inline-flex items-center gap-2"
+            >
+              Access Demo
+              <span>→</span>
+            </button>
           </div>
         </section>
 
